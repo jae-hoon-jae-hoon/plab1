@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './Components/Header/Header';
 import Footer from './Components/Footer/Footer';
 import Main from './Components/Main/Main';
+import Login from './Components/Member/Login';
+import SignUp from './Components/Member/SignUp';
 // import { useEffect } from 'react';
 // import axios from 'axios'
 
@@ -21,8 +23,8 @@ function App() {
         <Route path="/" element={<Main />} />
 
         {/* Member */}
-        {/* <Route path="/login" element={<Login />} />
-        <Route path="/join" element={<Join />} /> */}
+        <Route path="/login" element={<Login title={"로그인"} />} />
+        <Route path="/signup" element={<SignUp title={"회원가입"} />} />
 
         {/* Board */}
         {/* <Route path="/board/list" element={<BoardList />} />

@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+// Bootstrap
+import Button from 'react-bootstrap/Button';
+
 const HeaderRight = () => {
 
     const [Login, setLogin] = useState(false)
@@ -12,13 +15,15 @@ const HeaderRight = () => {
                 {
                     Login ?
                         <>
-                            <button className='btn'>로그아웃</button>
-                            <Link to="/mypage" className='btn'>마이페이지</Link>
+                            <Button variant="outline-secondary" size="sm" type="button">로그아웃</Button>
+                            <Link to="/mypage"><Button variant="outline-secondary" size="sm" type="button">마이페이지</Button></Link>
                         </>
                         :
                         <>
-                            <Link to="/login" className='btn'>로그인</Link>
-                            <Link to="/signup" className='btn'>회원가입</Link>
+
+
+                            <Link to="/login"><Button variant="outline-secondary" size="sm" type="button">로그인</Button></Link>
+                            <Link to="/signup"><Button variant="outline-secondary" size="sm" type="button">회원가입</Button></Link>
                         </>
 
                 }
