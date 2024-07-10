@@ -9,9 +9,11 @@ const Header = () => {
 
     return (
         <header className='header'>
-            <HeaderLeft />
-            <Navbar />
-            <HeaderRight />
+            <div className='inner'>
+                <HeaderLeft />
+                <Navbar />
+                <HeaderRight />
+            </div>
         </header>
     )
 }
