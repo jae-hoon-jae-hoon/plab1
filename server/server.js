@@ -20,14 +20,5 @@ app.use('/api/member', require('./Routes/Member/member'))
 // app.use('/api/board', require('./Routes/Board'));
 
 
-
-
-
-
-app.get('/api/test', (req, res, next) => {
-    // console.log(process.env.DB_HOST);
-    // console.log(12);
-})
-
 const PORT = 5000;
 app.listen(PORT, () => { console.log(`Listening on port ${PORT}`) });

@@ -23,6 +23,15 @@ body {
     text-align: center;
 }
 
+
+/* Form */
+.form-control.fail{
+    border:1px solid red
+}
+.form-control.success{
+    border:1px solid green
+}
+
 /* Pagination */
 .pgn-wrap {
     display: flex;
