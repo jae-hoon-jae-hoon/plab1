@@ -76,7 +76,7 @@ const SignUp = ({ title }) => {
             alert("PW를 입력하세요.")
             return false;
         }
-        if (pwInputRef.current.value != pwChkInputRef.current.value) {
+        if (pwInputRef.current.value !== pwChkInputRef.current.value) {
             pwInputRef.current.classList.add('fail')
             pwChkInputRef.current.classList.add('fail')
             pwInputRef.current.focus();
@@ -128,7 +128,7 @@ const SignUp = ({ title }) => {
                                     <Form.Control type="text" autoComplete="off" placeholder="아이디" ref={idInputRef} onChange={onChangeId} />
                                     <button className="btn btn-outline-secondary flex-shrink-0" type="button" onClick={onClickIdChk}>중복확인</button>
                                 </div>
-                                {idChkText != '' && <p className={idChk ? 'text-success' : 'text-danger'}>{idChkText}</p>}
+                                {idChkText !== '' && <p className={idChk ? 'text-success' : 'text-danger'}>{idChkText}</p>}
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="userPassword">
                                 <Form.Label>비밀번호</Form.Label>

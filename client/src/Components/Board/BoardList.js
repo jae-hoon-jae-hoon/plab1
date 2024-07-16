@@ -22,7 +22,7 @@ const BoardList = ({ title }) => {
             <div className='container board board-list'>
                 <div className='inner'>
                     <div className='container__content'>
-
+                        {/* Search */}
                         <div className='board__search-wrap'>
                             <div className="container-fluid">
                                 <form className="d-inline-flex">
@@ -32,6 +32,15 @@ const BoardList = ({ title }) => {
                             </div>
                         </div>
 
+                        {/* Write Button */}
+                        <div className='board__write-btn-wrap'>
+                            <Link to="/board/write">
+                                <button className="btn btn-secondary">글쓰기</button>
+                            </Link>
+                        </div>
+
+
+                        {/* List */}
                         <table className="table table-hover text-center">
                             <thead>
                                 <tr>
@@ -91,6 +100,7 @@ const BoardList = ({ title }) => {
                                 </li>
                             </ul>
                         </div>
+
                     </div>
                 </div>
             </div>

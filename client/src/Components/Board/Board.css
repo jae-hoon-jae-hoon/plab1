@@ -1,5 +1,10 @@
 
 .board__search-wrap{
-    margin-bottom: 40px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.board__write-btn-wrap{
+    margin-bottom: 20px;
     text-align: right;
 }
