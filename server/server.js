@@ -13,7 +13,7 @@ const cookieParser = require('cookie-parser');
 
 // Middleware
 app.use(express.json()); // 유저가 보낸 array/object 데이터를 출력해보기 위해 필요
-app.use(cookieParser());
+app.use(cookieParser()); // 쿠키를 사용하기 쉽게 함. req로 받을때 객체형태로 변환, 쿠키삭제 편리
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
@@ -42,7 +42,7 @@ app.use(cors({
 
 // Routes
 app.use('/api/member', require('./Routes/Member/member'))
-// app.use('/api/board', require('./Routes/Board'));
+app.use('/api/board', require('./Routes/Board/board'));
 
 
 const PORT = 5000;

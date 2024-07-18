@@ -7,7 +7,7 @@ const { formatDate } = require('../../common');
 
 // Library
 const bcrypt = require('bcrypt');
-const { generateAccessToken, generateRefreshToken, saveRefreshToken } = require('../../jwt');
+const { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } = require('../../jwt');
 
 
 /* 아이디 중복검사 */
@@ -136,7 +136,7 @@ router.post('/login', (req, res) => {
             // 하나라도 실패하면 로그인 실패
 
             // 1. access, refresh 토큰 생성
-            let tokenData = { userId: userData.userId, userName: userData.userName }
+            let tokenData = { userNo: userData.userNo, userName: userData.userName }
             const accessToken = generateAccessToken(tokenData)
             const refreshToken = generateRefreshToken(tokenData)
 
@@ -193,6 +193,92 @@ router.get('/logout', (req, res) => {
     res.json({ success: true })
 })
 
-/* ⚽ 로그인 토큰검사 */
+/* 로그인 토큰검사 */
+router.post('/authorization', (req, res) => {
+    const { userNo, userName } = req.body;
+
+    const accessToken = req.cookies.accessToken
+    const refreshToken = req.cookies.refreshToken
+
+    try {
+        let verifyResult = verifyAccessToken(accessToken)
+
+        // 1. accessToken 유효
+        if (verifyResult.userNo === userNo && verifyResult.userName === userName) {
+            return res.json({ success: true });
+        }
+        // 로그인정보 != 토큰정보
+        else {
+            return res.json({ success: false });
+        }
+
+    } catch (error) {
+        // accessToken 만료
+        if (error.name == 'TokenExpiredError') {
+
+            // refreshToken DB 검사
+            let sql = "SELECT * FROM token WHERE refreshToken = ?"
+            let params = [refreshToken]
+            const { values } = db.query(sql, params);
+
+            // refreshToken DB에 없을때
+            if (values.length == 0) {
+                return res.json({ success: false, error: 'refreshToken DB Error' })
+            }
+
+            // refreshToken 검증
+            try {
+                const verifyRefreshResult = verifyRefreshToken(refreshToken)
+
+                // 2. refreshToken 유효 -> 새 accessToken 발급 + 쿠키 갱신
+                let newAccessToken = generateAccessToken(verifyRefreshResult)
+                if (!newAccessToken) {
+                    return res.json({ success: false, error: "new accessToken Error" });
+                }
+
+                // accessToken 쿠키 저장
+                res.cookie(
+                    'accessToken',
+                    newAccessToken,
+                    {
+                        // secure: true,        // HTTPS에서만 전송
+                        secure: false,        // localhost라서 false로 처리
+                        httpOnly: true,      // JavaScript에서 접근 불가
+                        sameSite: 'Strict',  // 동일 사이트에서만 전송
+                        maxAge: 3600000      // 1시간 후 만료
+                    }
+
+                );
+
+                console.log("accessToken 재발급");
+
+                return res.json({ success: true });
+            }
+            // 3. refreshToken 만료 -> 로그인페이지로 이동
+            catch (error) {
+                // ⚽ refreshToken DB 삭제 - trigger로 regDate가 14일 이상 지난건 지우는 방법으로
+
+                // 쿠키 삭제
+                res.clearCookie('accessToken');
+                res.clearCookie('refreshToken');
+
+                return res.json({
+                    success: false,
+                    error: "refreshToken Value Error",
+                });
+            }
+
+        }
+        else {
+            // 쿠키 삭제
+            res.clearCookie('accessToken');
+            res.clearCookie('refreshToken');
+
+            return res.json({
+                success: false
+            });
+        }
+    }
+})
 
 module.exports = router;

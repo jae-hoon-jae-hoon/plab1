@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // Css
@@ -7,12 +7,95 @@ import './Board.css'
 // Components
 import SubVisual from '../SubVisual/SubVisual'
 
+// Library
+import axios from 'axios'
+import Pagination from '../Pagination/Pagination'
+
 const BoardList = ({ title }) => {
+
+    // State
+    const [searchInput, setSearchInput] = useState('')
+    const [currentPage, setCurrentPage] = useState(1);
+    const [list, setList] = useState([])
+    const [totalListCnt, setTotalListCnt] = useState(0);
+    const [listStartNum, setListStartNum] = useState(0);
+    const [pgnLastNum, setPgnLastNum] = useState(0);
+    const [pgnNumbers, setPgnNumbers] = useState([]);
+
+    // useEffect
+    useEffect(() => {
+
+        let keyword = searchInput;
+        keyword = keyword.trim()
+
+        if (keyword && keyword.length < 2) {
+            alert('검색어를 두 글자 이상 입력하세요.')
+            return false;
+        }
+
+        // getList
+        let data = {
+            currentPage,
+            keyword
+        }
+        axios.post('/api/board/list', data)
+            .then((result) => {
+                if (result.data.success) {
+                    setList(result.data.listData.list)
+                    setListStartNum(result.data.listData.listStartNum)
+                    setPgnLastNum(result.data.listData.pgnLastNum)
+                    setPgnNumbers(result.data.listData.pgnNumbers)
+                    setTotalListCnt(result.data.listData.totalListCnt)
+                }
+                else {
+                    alert("리스트 조회에 실패했습니다.")
+                    return
+                }
+            })
+    }, [currentPage])
+
+
+    // Method
+    const onChangeSearchInput = (e) => {
+        setSearchInput(e.target.value)
+    }
 
     const onClickSearch = (e) => {
         e.preventDefault();
 
-        console.log("검색");
+        let keyword = searchInput;
+        keyword = keyword.trim()
+
+        if (keyword && keyword.length < 2) {
+            alert('검색어를 두 글자 이상 입력하세요.')
+            return false;
+        }
+
+        setCurrentPage(1)
+
+
+        // getList
+        let data = {
+            currentPage,
+            keyword
+        }
+        axios.post('/api/board/list', data)
+            .then(result => {
+
+                if (result.data.success) {
+                    setList(result.data.listData.list)
+                    setListStartNum(result.data.listData.listStartNum)
+                    setPgnLastNum(result.data.listData.pgnLastNum)
+                    setPgnNumbers(result.data.listData.pgnNumbers)
+                    setTotalListCnt(result.data.listData.totalListCnt)
+
+
+                }
+                else {
+                    alert("리스트 조회에 실패했습니다.")
+                    return false;
+                }
+            })
     }
 
     return (
@@ -26,7 +109,7 @@ const BoardList = ({ title }) => {
                         <div className='board__search-wrap'>
                             <div className="container-fluid">
                                 <form className="d-inline-flex">
-                                    <input className="form-control me-2" placeholder="Search" aria-label="Search" />
+                                    <input className="form-control me-2" placeholder="Search" aria-label="Search" value={searchInput} onChange={onChangeSearchInput} />
                                     <button className="btn btn-secondary" onClick={onClickSearch}>Search</button>
                                 </form>
                             </div>
@@ -40,7 +123,9 @@ const BoardList = ({ title }) => {
                         </div>
 
 
+
                         {/* List */}
+                        <span style={{ fontSize: "13px" }} >총 {totalListCnt} 건</span>
                         <table className="table table-hover text-center">
                             <thead>
                                 <tr>
@@ -51,59 +136,45 @@ const BoardList = ({ title }) => {
                                 </tr>
                             </thead>
                             <tbody className="table-group-divider">
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>@fat</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td>gdgd</td>
-                                    <td>asdasdasd</td>
-                                    <td>@zzcxcx</td>
-                                </tr>
+                                {
+                                    list.length > 0 ?
+                                        list.map((item, i) => {
+                                            let listNo = listStartNum - i;
+                                            return (
+                                                <tr key={'board-list-' + item.boardNo}>
+                                                    <th scope="row">{listNo}</th>
+                                                    <td>
+                                                        <Link to={`/board/detail/${item.boardNo}`} className='d-block'>
+                                                            {item.title}
+                                                        </Link>
+                                                    </td>
+                                                    <td>{item.userName}</td>
+                                                    <td>{item.formatDate}</td>
+                                                </tr>
+                                            )
+                                        })
+
+                                        :
+                                        <tr>
+                                            <td colSpan={4}>게시글이 존재하지 않습니다.</td>
+                                        </tr>
+                                }
                             </tbody>
                         </table>
 
                         {/* Pagination */}
                         <div className='pgn-wrap'>
-                            <ul className="pagination">
-                                <li className="page-item disabled">
-                                    <Link to="#" className="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></Link>
-                                </li>
-
-                                <li className="page-item active">
-                                    <Link to="#" className="page-link">1</Link>
-                                </li>
-                                <li className="page-item">
-                                    <Link to="#" className="page-link">2</Link>
-                                </li>
-                                <li className="page-item">
-                                    <Link to="#" className="page-link">3</Link>
-                                </li>
-                                <li className="page-item">
-                                    <Link to="#" className="page-link">4</Link>
-                                </li>
-                                <li className="page-item">
-                                    <Link to="#" className="page-link">5</Link>
-                                </li>
-
-                                <li className="page-item">
-                                    <Link to="#" className="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></Link>
-                                </li>
-                            </ul>
+                            <Pagination
+                                currentPage={currentPage}
+                                pgnNumbers={pgnNumbers}
+                                pgnLastNum={pgnLastNum}
+                                setCurrentPage={setCurrentPage}
+                            />
                         </div>
 
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     )
 }

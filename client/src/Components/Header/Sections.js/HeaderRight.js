@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // Redux
@@ -20,13 +20,9 @@ const HeaderRight = () => {
     // dispatch
     const dispatch = useDispatch();
 
-    // State
-    const [isLogin, setIsLogin] = useState(false)
-
     // useEffect
     useEffect(() => {
         console.log("헤더Right 실행");
-        userData ? setIsLogin(true) : setIsLogin(false)
     }, [userData])
 
 
@@ -47,20 +43,23 @@ const HeaderRight = () => {
 
     return (
         <div className='header-right'>
-            <div className='header-login'>
-                {
-                    isLogin ?
-                        <>
+            {
+                userData ?
+                    <div className='header-login logined'>
+                        <span className='header-login__welcome'><b>{userData.userName}</b> 님, 환영합니다</span>
+                        <div className='header-login__btn-wrap'>
                             <Button variant="outline-secondary" size="sm" type="button" onClick={onClickLogout}>로그아웃</Button>
                             <Link to="/mypage"><Button variant="outline-secondary" size="sm" type="button">마이페이지</Button></Link>
-                        </>
-                        :
-                        <>
+                        </div>
+                    </div>
+                    :
+                    <div className='header-login'>
+                        <div className='header-login__btn-wrap'>
                             <Link to="/login"><Button variant="outline-secondary" size="sm" type="button">로그인</Button></Link>
                             <Link to="/signup"><Button variant="outline-secondary" size="sm" type="button">회원가입</Button></Link>
-                        </>
-                }
-            </div>
+                        </div>
+                    </div>
+            }
         </div>
     )
 }

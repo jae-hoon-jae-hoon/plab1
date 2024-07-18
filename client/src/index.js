@@ -7,7 +7,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 // Redux
-import store, { persistor } from './app/store'
+import store, { persistor } from './store/store'
 import { Provider } from 'react-redux'
 
 // Redux Persist

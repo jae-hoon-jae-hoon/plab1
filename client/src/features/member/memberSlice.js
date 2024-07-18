@@ -8,7 +8,7 @@ export const memberSlice = createSlice({
     reducers: {
         setUserData: (state, action) => {
             state.userData = {
-                userId: action.payload.userId,
+                userNo: action.payload.userNo,
                 userName: action.payload.userName
             }
         },

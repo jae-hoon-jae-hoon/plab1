@@ -10,28 +10,30 @@ const REFRESH_SECRET_KEY = 'your-secret-key2';
 
 
 
-const generateAccessToken = ({ userId, userName }) => {
-    return jwt.sign({ userId, userName }, ACCESS_SERCRET_KEY, { expiresIn: '1h' });
+const generateAccessToken = ({ userNo, userName }) => {
+    return jwt.sign({ userNo, userName }, ACCESS_SERCRET_KEY, { expiresIn: '1h' });
 };
 
 const verifyAccessToken = (token) => {
-    try {
-        return jwt.verify(token, ACCESS_SERCRET_KEY);
-    } catch (error) {
-        return null;
-    }
+    return jwt.verify(token, ACCESS_SERCRET_KEY);
+    // try {
+    //     return jwt.verify(token, ACCESS_SERCRET_KEY);
+    // } catch (error) {
+    //     return error;
+    // }
 };
 
-const generateRefreshToken = ({ userId, userName }) => {
-    return jwt.sign({ userId, userName }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
+const generateRefreshToken = ({ userNo, userName }) => {
+    return jwt.sign({ userNo, userName }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
 };
 
 const verifyRefreshToken = (token) => {
-    try {
-        return jwt.verify(token, REFRESH_SECRET_KEY);
-    } catch (error) {
-        return null;
-    }
+    return jwt.verify(token, REFRESH_SECRET_KEY);
+    // try {
+    //     return jwt.verify(token, REFRESH_SECRET_KEY);
+    // } catch (error) {
+    //     return error;
+    // }
 };
 
 

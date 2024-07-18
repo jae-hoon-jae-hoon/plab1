@@ -6,12 +6,12 @@ import memberSliceReducer from '../features/member/memberSlice'
 import {
     persistStore,
     persistReducer,
-    // FLUSH,
-    // REHYDRATE,
-    // PAUSE,
-    // PERSIST,
-    // PURGE,
-    // REGISTER,
+    FLUSH,
+    REHYDRATE,
+    PAUSE,
+    PERSIST,
+    PURGE,
+    REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // 기본 로컬 스토리지 사용
 
@@ -29,9 +29,9 @@ const store = configureStore({
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
-            // serializableCheck: {
-                // ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-            // },
+            serializableCheck: {
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
         }),
 })
 
