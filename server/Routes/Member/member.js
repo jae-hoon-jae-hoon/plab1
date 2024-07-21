@@ -197,6 +197,10 @@ router.get('/logout', (req, res) => {
 router.post('/authorization', (req, res) => {
     const { userNo, userName } = req.body;
 
+    if(!userNo || !userName){
+        return res.json({ success: false, error: 'No User Data' })
+    }
+
     const accessToken = req.cookies.accessToken
     const refreshToken = req.cookies.refreshToken
 

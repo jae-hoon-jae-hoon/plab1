@@ -1,7 +1,15 @@
-.main-sec{
+.main {
+    background-color: #25852B;
+}
+
+.main-sec {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: aquamarine;
+    padding-top: 80px;
+    background-color: #25852B;
+}
+
+.main-img {
+    max-width: 100%
 }

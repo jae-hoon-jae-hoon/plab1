@@ -11,7 +11,7 @@ const REFRESH_SECRET_KEY = 'your-secret-key2';
 
 
 const generateAccessToken = ({ userNo, userName }) => {
-    return jwt.sign({ userNo, userName }, ACCESS_SERCRET_KEY, { expiresIn: '1h' });
+    return jwt.sign({ userNo, userName }, ACCESS_SERCRET_KEY, { expiresIn: '15m' });
 };
 
 const verifyAccessToken = (token) => {
@@ -24,7 +24,7 @@ const verifyAccessToken = (token) => {
 };
 
 const generateRefreshToken = ({ userNo, userName }) => {
-    return jwt.sign({ userNo, userName }, REFRESH_SECRET_KEY, { expiresIn: '7d' });
+    return jwt.sign({ userNo, userName }, REFRESH_SECRET_KEY, { expiresIn: '12h' });
 };
 
 const verifyRefreshToken = (token) => {

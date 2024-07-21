@@ -106,8 +106,12 @@ const BoardUpdate = ({ title }) => {
     const onClickCancel = (e) => {
         e.preventDefault();
 
-        // ⚽ detail페이지로 뒤로가기
-        navigate(-1)
+        // 히스토리 스택을 확인하여 뒤로가기 로직 구현
+        if (window.history.state && window.history.state.idx > 0) {
+            navigate(-1);
+        } else {
+            navigate('/board');
+        }
     }
 
 

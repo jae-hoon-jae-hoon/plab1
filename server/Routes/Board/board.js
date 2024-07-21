@@ -107,6 +107,10 @@ router.post('/list', async (req, res) => {
 
     // getList
     let list = await getList(startIndex, perPage, keyword)
+    if (!list) {
+        result.message = 'Get List Fail';
+        return result;
+    }
 
     result.success = true
     result.message = "Success Select List"
@@ -215,11 +219,11 @@ router.post('/delete', (req, res) => {
 
     // Validation
     if (!boardNo) {
-        result.message = "boardNo is required"
+        result.message = "boardNo Error"
         return res.status(400).json(result);
     }
 
-    if (!checkUser(accessToken, userNo)) {
+    if (!checkUser(accessToken, userNo)) { // 작성자 일치 검사
         result.message = "User Check Fail"
         return res.status(400).json(result)
     }
@@ -245,14 +249,7 @@ router.post('/delete', (req, res) => {
 const checkUser = (accessToken, userNo) => {
     try {
         let verifyResult = verifyAccessToken(accessToken)
-
-        // 1. accessToken 유효
-        if (verifyResult.userNo === userNo) {
-            return true
-        }
-        else {
-            return false
-        }
+        return verifyResult.userNo === userNo;
     }
     catch (e) {
         return false

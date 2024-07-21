@@ -1,11 +1,11 @@
 import './Member.css'
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from "react-router-dom";
 
 // Redux
-import { useDispatch } from 'react-redux';
-import { setUserData } from '../../features/member/memberSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { clearUserData, setUserData } from '../../features/member/memberSlice';
 
 // Components
 import SubVisual from '../SubVisual/SubVisual'
@@ -20,6 +20,9 @@ import Form from 'react-bootstrap/Form';
 
 const Login = ({ title }) => {
     // Redux
+    const userData = useSelector((state) => {
+        return state.member.userData
+    });
     const dispatch = useDispatch();
 
     // State
@@ -38,6 +41,21 @@ const Login = ({ title }) => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const url = queryParams.get("url");
+
+    // useEffect
+    useEffect(() => {
+        if (userData) {
+            axios.post('/api/member/authorization', userData)
+                .then((result) => {
+                    if (result.data.success) {
+                        navigate('/', { replace: true })
+                    }
+                    else {
+                        dispatch(clearUserData())
+                    }
+                })
+        }
+    }, [userData, navigate, dispatch])
 
     // Method
     const onChangeId = (e) => { setUserId(e.target.value) }
@@ -73,7 +91,7 @@ const Login = ({ title }) => {
             let userData = response.data.userData;
             dispatch(setUserData(userData))
 
-            url ? navigate(url) : navigate('/')
+            url ? navigate(url, { replace: true }) : navigate('/', { replace: true })
 
         } catch (error) {
             alert('회원정보가 일치하지 않습니다.')

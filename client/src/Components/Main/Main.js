@@ -10,7 +10,10 @@ import './Main.css';
 const Main = () => {
     return (
         <div className='main'>
-            <section className='main-sec' style={{ background: `url(${main_img}) no-repeat center / cover` }}></section>
+            {/* <section className='main-sec' style={{ background: `url(${main_img}) no-repeat center 40px / contain` }}> */}
+            <section className='main-sec'>
+                <img src={main_img} className='main-img' />
+            </section>
         </div>
     )
 }

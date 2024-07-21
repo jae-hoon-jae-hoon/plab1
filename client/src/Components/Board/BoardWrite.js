@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 const BoardWrite = ({ title }) => {
     // navigate
     const navigate = useNavigate();
+    console.log(navigate);
 
     // Redux
     const userData = useSelector((state) => {
@@ -28,22 +29,23 @@ const BoardWrite = ({ title }) => {
 
     // useEffect
     useEffect(() => {
-
         // Authorization
         if (!userData) {
-            alert('로그인이 필요한 기능입니다.')
-            navigate('/login?url=/board/write');
+            alert('로그인이 필요한 기능입니다.1')
+            navigate('/login?url=/board/write', { replace: true });
         }
-        axios.post('/api/member/authorization', userData)
-            .then((result) => {
-                console.log(result);
-                if (!result.data.success) {
-                    // 권한 실패경우 - 로그인페이지 이동 + returnURL은 /board/write로 
-                    alert('로그인이 필요한 기능입니다.')
-                    navigate('/login?url=/board/write');
-                }
-            })
-    }, [userData])
+        else {
+            axios.post('/api/member/authorization', userData)
+                .then((result) => {
+                    if (!result.data.success) {
+                        // 권한 실패경우 - 로그인페이지 이동 + returnURL은 /board/write로 
+                        alert('로그인이 필요한 기능입니다.2')
+                        navigate('/login?url=/board/write', { replace: true });
+                    }
+                })
+        }
+
+    }, [userData, navigate])
 
     // Method
     const onChangeTitle = (e) => { setTitle(e.target.value) }

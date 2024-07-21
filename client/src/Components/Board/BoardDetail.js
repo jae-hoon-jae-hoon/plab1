@@ -34,7 +34,6 @@ const BoardDetail = ({ title }) => {
                 result => {
                     if (result.data.success) {
                         setData(result.data.data)
-                        console.log(result.data.data);
                     }
                     else {
                         alert("게시글을 불러오지 못했습니다.")
@@ -45,7 +44,7 @@ const BoardDetail = ({ title }) => {
     }, [id])
 
     // Method
-    const onClickDelete = (e) => {
+    const onClickDelete = async (e) => {
         e.preventDefault();
 
         let confirm = window.confirm("삭제하시겠습니까?")
@@ -55,19 +54,32 @@ const BoardDetail = ({ title }) => {
             boardNo: id,
             userNo: data.userNo,
         }
-        axios.post('/api/board/delete', deleteData)
-            .then((result) => {
-                console.log(result);
-                if (result.data.success) {
-                    alert('게시글이 삭제되었습니다.')
-                    navigate('/board');
-                }
-                else {
-                    alert("게시글 삭제에 실패하였습니다.")
-                    return false;
-                }
-            })
+
+        try {
+            let deleteResult = await axios.post('/api/board/delete', deleteData)
+
+            if (deleteResult.data.success) {
+                alert('게시글이 삭제되었습니다.')
+                navigate('/board');
+            }
+            else {
+                throw new Error();
+            }
+        } catch (error) {
+            alert("게시글 삭제에 실패하였습니다.")
+            return false;
+        }
     }
+    const onClickGoBack = (e) => {
+        e.preventDefault();
+
+        // 히스토리 스택을 확인하여 뒤로가기 로직 구현
+        if (window.history.state && window.history.state.idx > 0) {
+            navigate(-1);
+        } else {
+            navigate('/board');
+        }
+    };
 
     return (
         <>
@@ -114,7 +126,7 @@ const BoardDetail = ({ title }) => {
                             </div>
                         </div>
 
-                        <button onClick={() => navigate(-1)}>⚽ 목록으로</button>
+                        <button onClick={onClickGoBack}>목록으로</button>
                     </div>
                 </div>
             </div>

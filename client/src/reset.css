@@ -66,8 +66,10 @@ a:not([class]) {
     text-decoration-skip-ink: auto;
     color: currentColor;
 }
+
 a,
-a:visited{
+a:visited,
+a:focus {
     text-decoration: none;
     color: currentColor;
 }

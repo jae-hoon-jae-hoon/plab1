@@ -22,8 +22,13 @@ const HeaderRight = () => {
 
     // useEffect
     useEffect(() => {
-        console.log("헤더Right 실행");
-    }, [userData])
+        axios.post('/api/member/authorization', userData)
+            .then(result => {
+                if (!result.data.success) {
+                    dispatch(clearUserData())
+                }
+            })
+    }, [userData, dispatch])
 
 
     // Method
