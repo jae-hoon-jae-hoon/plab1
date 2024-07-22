@@ -44,6 +44,8 @@ app.use(cors({
 app.use('/api/member', require('./Routes/Member/member'))
 app.use('/api/board', require('./Routes/Board/board'));
 
+app.use('/api/stadium', require('./Routes/Stadium/stadium'));
+
 
 const PORT = 5000;
 app.listen(PORT, () => { console.log(`Listening on port ${PORT}`) });
