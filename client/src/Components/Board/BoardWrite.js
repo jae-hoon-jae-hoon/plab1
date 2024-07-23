@@ -16,7 +16,6 @@ import { useSelector } from 'react-redux';
 const BoardWrite = ({ title }) => {
     // navigate
     const navigate = useNavigate();
-    console.log(navigate);
 
     // Redux
     const userData = useSelector((state) => {

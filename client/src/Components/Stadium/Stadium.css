@@ -1,3 +1,7 @@
+.my-stadium{
+    margin-bottom: 50px;
+}
+
 .stadium-wrap {
     display: flex;
 }
@@ -12,18 +16,89 @@
 }
 
 .stadium__search {
-    margin-bottom: 20px;
+    border-bottom: 1px solid #e5e5e5;
 }
 
-.stadium__search-form {}
+.stadium__search-form {
+    display: flex;
+    height: 50px;
+}
+
+.stadium__search-form .input {
+    width: 100%;
+    font-size: 15px;
+    padding: 0 5px;
+}
+
+.stadium__search-form button {
+    flex-shrink: 0;
+    width: 50px;
+    padding: 0;
+    border-radius: 0;
+}
 
 .stadium__list {}
 
-.stadium__list li:not(:last-child) {
-    margin-bottom: 10px;
+.stadium__list ul {
+    height: 450px;
+    overflow-y: scroll;
+    padding: 10px;
 }
 
-.stadium__list-name {}
+.stadium__list ul::-webkit-scrollbar {
+    width: 10px;
+}
+
+.stadium__list ul::-webkit-scrollbar-thumb {
+    background-color: #2f3542;
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 2px solid transparent;
+}
+
+.stadium__list ul::-webkit-scrollbar-track {
+    background-color: grey;
+    border-radius: 10px;
+    box-shadow: inset 0px 0px 5px white;
+}
+
+/* .stadium__list li:not(:last-child) {
+    margin-bottom: 10px;
+} */
+.stadium__list li {
+    position: relative;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 10px 0;
+    cursor: pointer;
+}
+
+.stadium__list-name {
+    padding-right: 35px;
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+
+.stadium__list-btn-save {
+    position: absolute;
+    top:10px;
+    right:0px;
+
+    padding: 2px 4px;
+
+    font-size: 12px;
+    color: #0d6efd;
+
+    border: 1px solid #0d6efd;
+    border-radius: 4px;
+    background-color: transparent;
+
+    z-index: 10;
+}
+.stadium__list-btn-save.act {
+    color: #fff;
+    border: 1px solid #0d6efd;
+    background-color: #0d6efd;
+}
 
 .stadium__list-address {
     font-size: 13px;
@@ -31,12 +106,12 @@
 
 .stadium__right {
     flex-grow: 1;
-    background-color: aqua;
 }
 
 .stadium__map {
     width: 100%;
     min-height: 500px;
+    height: 100%;
 }
 
 
