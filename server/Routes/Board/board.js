@@ -69,11 +69,13 @@ router.post('/list', async (req, res) => {
 
     const { currentPage, keyword } = req.body;
 
+    // Validation
     if (keyword && keyword.length < 2) {
         result.message = 'Keyword Error';
         return result;
     }
-    const perPage = 2;
+    
+    const perPage = 2; // ⚽ 완성후 값수정
 
     // Total List Count
     const totalListCnt = await getTotalListCnt(keyword);

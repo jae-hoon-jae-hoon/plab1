@@ -46,10 +46,10 @@ const BoardList = ({ title }) => {
             .then((result) => {
                 if (result.data.success) {
                     setList(result.data.listData.list)
+                    setTotalListCnt(result.data.listData.totalListCnt)
                     setListStartNum(result.data.listData.listStartNum)
                     setPgnLastNum(result.data.listData.pgnLastNum)
                     setPgnNumbers(result.data.listData.pgnNumbers)
-                    setTotalListCnt(result.data.listData.totalListCnt)
                 }
                 else {
                     alert("리스트 조회에 실패했습니다.")

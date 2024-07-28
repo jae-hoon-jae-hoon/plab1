@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 // Css
 import './Stadium.css'
@@ -24,52 +24,81 @@ const StadiumMain = ({ title }) => {
     });
 
     // State
-    const [stadiums, setStadiums] = useState([]); // 전체 구장 리스트 (10개씩)
     const [myStadium, setMyStadium] = useState([]); // 즐겨찾기(전체)
-    const [myStadiumNoArr, setMyStadiumNoArr] = useState([])
+    const [stadiums, setStadiums] = useState([]); // 전체 구장 리스트 (10개씩)
+    const [pagination, setPagination] = useState(null)
+
+    // Ref
+    const searchInput = useRef(null)
 
     // useEffect
     useEffect(() => {
-        const getStadiums = async () => {
-            try {
-                let result = await axios.post('/api/stadium/getStadium', userData)
-                if (result.data.success) {
-                    setStadiums(result.data.stadiums)
+        getMyStadiums()
 
-                    if (result.data.myStadium) {
-                        setMyStadium(result.data.myStadium)
-
-                        let stadiumNoTemp = [];
-                        result.data.myStadium.map((item) => {
-                            stadiumNoTemp.push(item.stadiumNo)
-                        })
-                        setMyStadiumNoArr(stadiumNoTemp)
-                    }
-                    else {
-                        setMyStadium([])
-                        setMyStadiumNoArr([])
-                    }
-
-                    kakaoMapLoad(result.data.stadiums, [])
-                } else {
-                    throw new Error()
-                }
-            } catch (error) {
-                // console.log(error);
-                setStadiums([])
-            }
-        }
-
-        getStadiums()
-    }, [userData])
+    }, [userData, setStadiums])
 
     // Method
-    const onSubmitSearch = (e) => {
-        e.preventDefault();
-        console.log("검색");
+    const getMyStadiums = async () => {
+        try {
+            let data = {
+                userNo: userData?.userNo ?? '',
+            }
+            let result = await axios.post('/api/stadium/getStadium', data)
+
+            if (result.data.success) {
+
+                if (result.data.myStadium) {
+                    setMyStadium(result.data.myStadium)
+
+                    // KakaoMap
+                    kakaoMapLoad(result.data.myStadium, setStadiums, setPagination)
+                }
+                else {
+                    setMyStadium([])
+
+                    // KakaoMap
+                    kakaoMapLoad([], setStadiums, setPagination)
+                }
+
+            } else {
+                throw new Error()
+            }
+        } catch (error) {
+            // console.log(error);
+            alert('즐겨찾기 정보를 불러오는데 실패했습니다.')
+            setMyStadium([])
+        }
     }
 
-    const onClickSave = (stadiumNo, userNo) => async (e) => {
+    const onSubmitSearch = (e) => {
+        e.preventDefault();
+
+        // let keyword = searchInput?.current?.value;
+
+        // if (keyword && keyword.length < 2) {
+        //     alert('검색어를 두 글자 이상 입력하세요.')
+        //     return false;
+        // }
+
+        // getMyStadiums();
+
+        console.log("검색");
+    }
+    const onClickPgn = (page) => (e) => {
+
+        // let keyword = searchInput?.current?.value;
+
+        // if (keyword && keyword.length < 2) {
+        //     alert('검색어를 두 글자 이상 입력하세요.')
+        //     return false;
+        // }
+
+        // setCurrentPage(page)
+        // getMyStadiums();
+        console.log("페이지네이션");
+    }
+
+    const onClickSave = (stadiumInfo, userNo) => async (e) => {
         e.preventDefault();
 
         if (!userNo) {
@@ -77,21 +106,38 @@ const StadiumMain = ({ title }) => {
             return false;
         }
 
-        let data = { stadiumNo, userNo }
+        let data = { stadiumInfo, userNo }
         try {
             let result = await axios.post('/api/stadium/setMyStadium', data)
             if (result.data.success) {
                 if (result.data.active) {
-                    setMyStadiumNoArr((prev) => {
-                        let temp = [...prev, stadiumNo]
-                        temp = temp.sort()
+
+                    let selectedData = stadiums.find(item => item.id === stadiumInfo.id);
+
+                    let newData = {
+                        myStadiumNo: result.data.insertId,
+                        mapId: selectedData.id,
+                        place_name: selectedData.place_name,
+                        address_name: selectedData?.address_name
+                            ? selectedData.address_name
+                            : '',
+                        road_address_name: selectedData?.road_address_name
+                            ? selectedData.road_address_name
+                            : '',
+                        x: selectedData.x,
+                        y: selectedData.y,
+                    }
+
+                    setMyStadium((prev) => {
+                        let temp = [...prev, newData]
+                        temp.sort((a, b) => a.mapId - b.mapId);
                         return temp
                     })
                     e.target.classList.add('act')
                 }
                 else {
-                    setMyStadiumNoArr((prev) => {
-                        let temp = prev.filter(no => no !== stadiumNo)
+                    setMyStadium((prev) => {
+                        let temp = prev.filter(item => item.id !== stadiumInfo.id);
                         return temp
                     })
                     e.target.classList.remove('act')
@@ -135,7 +181,7 @@ const StadiumMain = ({ title }) => {
                                     <ul>
                                         {myStadium.map((item, i) => {
                                             return (
-                                                <li key={'mystadium-' + item.myStadiumNo} onClick={onClickMyStadiumList}>{item.title}</li>
+                                                <li key={'mystadium-' + item.id} onClick={onClickMyStadiumList}>{item.place_name}</li>
                                             )
                                         })}
                                     </ul>
@@ -147,37 +193,60 @@ const StadiumMain = ({ title }) => {
                             </div>
                         </div>
 
+                        {/* 버튼 */}
+                        <div style={{ padding: "20px", marginBottom: "60px", border: "1px solid " }}>
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary btn-sm"
+                                onClick={() => { }}
+                            >현재 위치에서 검색</button>
+
+                            &nbsp;&nbsp;
+
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary btn-sm"
+                                onClick={() => { }}
+                            >즐겨찾기 보기</button>
+                        </div>
+
+
                         {/* 구장 리스트 + 지도 */}
                         <div className='stadium-wrap'>
                             <div className='stadium__left'>
-                                <div className='stadium__search'>
+                                {/* <div className='stadium__search'>
                                     <form className='stadium__search-form' onSubmit={onSubmitSearch}>
-                                        <input className='input' placeholder='구장명을 입력해주세요.' />
+                                        <input ref={searchInput} className='input' placeholder='구장명을 입력해주세요.' />
                                         <button className='btn btn-outline-secondary'>검색</button>
                                     </form>
-                                </div>
+                                </div> */}
                                 <div className='stadium__list'>
                                     <ul>
                                         {
                                             stadiums.map((item, i) => {
-                                                let btnSaveActive = myStadiumNoArr.includes(item.stadiumNo) ? 'act' : '';
+                                                let btnSaveActive = myStadium.find(mystd => mystd.mapId === item.id) ? 'act' : '';
+
+                                                let addressText = item.road_address_name ? item.road_address_name : item.address_name;
+
                                                 return (
                                                     <li
-                                                        key={'stadium-' + item.stadiumNo}
-                                                        // data-no={item.stadiumNo}
-                                                        // data-lat={item.latitude}
-                                                        // data-lng={item.longitude}
+                                                        key={'stadium-' + item.id}
+                                                        className='stadium__list-item'
                                                         onClick={() => {
-                                                            panTo(item.latitude, item.longitude);
+                                                            panTo(item.y, item.x);
                                                             closeOverlay();
                                                             setOverlay(i);
                                                         }}
                                                     >
                                                         <div className="stadium__list-name">
-                                                            {item.title}
+                                                            {item.place_name}
                                                         </div>
-                                                        <div className="stadium__list-address">{item.address}</div>
-                                                        <button className={`stadium__list-btn-save ${btnSaveActive}`} onClick={onClickSave(item.stadiumNo, userData.userNo ?? '')}>저장</button>
+                                                        <div className="stadium__list-address">{addressText}</div>
+                                                        <button
+                                                            className={`stadium__list-btn-save ${btnSaveActive}`}
+                                                            onClick={onClickSave(item, userData?.userNo ?? '')}
+                                                        >저장</button>
+                                                        {/* ✏️ ?. : 옵셔널체이닝 */}
                                                     </li>
                                                 )
                                             })
@@ -189,8 +258,31 @@ const StadiumMain = ({ title }) => {
                                     </ul>
 
                                     {/* Pgn */}
-                                    <div className='pagination' style={{ height: "40px", backgroundColor: "lightgray", opacity: " 0.3" }}>
+                                    <div className='pagination-wrap'>
+                                        <ul className="pagination pagination-sm">
+                                            <li className="page-item" aria-label="FirstPage" onClick={onClickPgn(1)}>
+                                                <span className="page-link">&laquo;</span>
+                                            </li>
 
+                                            {
+                                                // pgnNumbers.map(number => (
+                                                //     <li
+                                                //         key={"pgn-" + number}
+                                                //         className={`page-item ${number == currentPage ? 'active' : ''}`}
+                                                //         onClick={onClickPgn(number)}
+                                                //     >
+                                                //         <span className="page-link">{number}</span>
+                                                //     </li>
+                                                // ))
+                                            }
+
+                                            <li className="page-item" aria-label="LastPage" onClick={
+                                                () => { }
+                                                //    onClickPgn(pgnLastNum)
+                                            }>
+                                                <span className="page-link">&raquo;</span>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
