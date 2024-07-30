@@ -71,7 +71,7 @@ a,
 a:visited,
 a:focus {
     text-decoration: none;
-    color: currentColor;
+    /* color: currentColor; */
 }
 
 

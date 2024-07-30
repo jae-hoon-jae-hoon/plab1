@@ -10,73 +10,13 @@ const bcrypt = require('bcrypt');
 const { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } = require('../../jwt');
 
 
-// Method
-async function getTotalListCnt(keyword) {
-    try {
-        const results = await new Promise((resolve, reject) => {
-            let sql = 'SELECT COUNT(*) as totalListCnt FROM stadium';
-            if (keyword) {
-                sql += ` WHERE title LIKE "%${keyword}%" OR address LIKE "%${keyword}%" `;
-            }
-
-            db.query(sql, (err, results) => {
-                if (err) {
-                    console.log(err);
-                    reject(false)
-                }
-                resolve(results);
-            });
-        });
-        const totalListCnt = results[0].totalListCnt;
-        return totalListCnt;
-    } catch (err) {
-        console.log(err);
-        return false
-    }
-}
-
-async function getList(startIndex, perPage, keyword) {
-    try {
-        const listData = await new Promise((resolve, reject) => {
-            let sql = `SELECT stadiumNo, title, address, latitude, longitude FROM stadium`;
-            if (keyword) {
-                sql += ` WHERE title LIKE "%${keyword}%" OR address LIKE "%${keyword}%" `;
-            }
-            sql += `
-                    ORDER BY stadiumNo ASC
-                    LIMIT ${startIndex}, ${perPage}
-                    `
-            db.query(sql, (err, results) => {
-                if (err) {
-                    console.log(err);
-                    reject(false)
-                }
-
-                resolve(results);
-            })
-        });
-        return listData;
-
-    } catch (err) {
-        console.log(err);
-        return false
-    }
-}
-
-
 // Router
-router.post('/getStadium', async (req, res) => {
-    const { userNo, keyword, currentPage } = req.body
 
-    console.log(userNo);
+/* 즐겨찾기 리스트 불러오기 */
+router.post('/getMyStadium', async (req, res) => {
+    const { userNo } = req.body
 
     let result = { success: false, message: '' }
-
-    // Validation
-    if (keyword && keyword.length < 2) {
-        result.message = 'Keyword Error';
-        return result;
-    }
 
     // Get My Stadium List
     if (userNo) {
@@ -88,12 +28,9 @@ router.post('/getStadium', async (req, res) => {
                 return res.status(500).json(result)
             }
 
-            // console.log(results);
-
             result.success = true;
             result.myStadium = results;
             return res.status(200).json(result)
-
         })
     }
     else {
@@ -101,64 +38,9 @@ router.post('/getStadium', async (req, res) => {
         result.myStadium = [];
         return res.status(200).json(result)
     }
-
-    // // --------------------------------------------------
-    // // Get Stadium List & Pagination
-
-    // const perPage = 6; // ⚽ 완성후 값수정
-
-    // // Total List Count
-    // const totalListCnt = await getTotalListCnt(keyword);
-
-    // // List Info
-    // const listStartNum = totalListCnt - ((currentPage - 1) * perPage)
-
-    // // Pagination
-    // const pgnLastNum = Math.ceil(totalListCnt / perPage)
-    // let pgnNumbers = [];
-    // if (currentPage < 3) {
-    //     for (let i = 1; i <= pgnLastNum; i++) {
-    //         pgnNumbers.push(i)
-    //         if (pgnNumbers.length == 5) break;
-    //     }
-    // }
-    // else if (currentPage + 2 > pgnLastNum) {
-    //     for (let i = pgnLastNum; i >= 1; i--) {
-    //         pgnNumbers.unshift(i)
-    //         if (pgnNumbers.length == 5) break;
-    //     }
-    // } else {
-    //     for (let i = currentPage - 2; i <= currentPage + 2; i++) {
-    //         pgnNumbers.push(i)
-    //         if (pgnNumbers.length == 5) break;
-    //     }
-    // }
-
-    // // Pgn Limit
-    // let startIndex = ((currentPage - 1) * perPage);
-
-    // // getList
-    // let list = await getList(startIndex, perPage, keyword)
-    // if (!list) {
-    //     result.message = 'Get List Fail';
-    //     return result;
-    // }
-
-    // result.success = true
-    // result.message = "Success Select List"
-    // result.listData = {
-    //     totalListCnt,
-    //     currentPage,
-    //     listStartNum,
-    //     list,
-
-    //     pgnLastNum,
-    //     pgnNumbers
-    // }
-    // return res.status(200).json(result)
 })
 
-// 즐겨찾기 저장 / 삭제
+/* 즐겨찾기 저장 및 삭제 */
 router.post('/setMyStadium', (req, res) => {
     const { stadiumInfo, userNo } = req.body
 

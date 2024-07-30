@@ -5,6 +5,7 @@
     color: #222;
     background-color: #fff;
     border-bottom: 1px solid lightgray;
+    z-index: 100;
 }
 
 .header.floating {

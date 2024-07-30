@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 // Css
 import './Stadium.css'
@@ -10,32 +10,32 @@ import SubVisual from '../SubVisual/SubVisual'
 import axios from 'axios'
 
 // Kakao Map
-import { closeOverlay, kakaoMapLoad, panTo, setOverlay } from './kakaomap'
+import { closeOverlay, kakaoMapLoad, panTo, setOverlay, showCurrentPosition, showMyStadium } from './kakaomap'
+// Slick
+import Slider from "react-slick";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 // Redux
 import { useSelector } from 'react-redux';
 
 
 const StadiumMain = ({ title }) => {
-
     // Redux
     const userData = useSelector((state) => {
         return state.member.userData
     });
 
     // State
-    const [myStadium, setMyStadium] = useState([]); // 즐겨찾기(전체)
-    const [stadiums, setStadiums] = useState([]); // 전체 구장 리스트 (10개씩)
-    const [pagination, setPagination] = useState(null)
-
-    // Ref
-    const searchInput = useRef(null)
+    const [stadiums, setStadiums] = useState([]); // 전체 구장 리스트
+    const [myStadium, setMyStadium] = useState([]); // 즐겨찾기 리스트
+    const [btnMyStadium, setBtnMyStadium] = useState(false);
 
     // useEffect
     useEffect(() => {
         getMyStadiums()
 
-    }, [userData, setStadiums])
+    }, [userData])
 
     // Method
     const getMyStadiums = async () => {
@@ -43,21 +43,17 @@ const StadiumMain = ({ title }) => {
             let data = {
                 userNo: userData?.userNo ?? '',
             }
-            let result = await axios.post('/api/stadium/getStadium', data)
+            let result = await axios.post('/api/stadium/getMyStadium', data)
 
             if (result.data.success) {
 
                 if (result.data.myStadium) {
                     setMyStadium(result.data.myStadium)
-
-                    // KakaoMap
-                    kakaoMapLoad(result.data.myStadium, setStadiums, setPagination)
+                    kakaoMapLoad(result.data.myStadium, setStadiums)
                 }
                 else {
                     setMyStadium([])
-
-                    // KakaoMap
-                    kakaoMapLoad([], setStadiums, setPagination)
+                    kakaoMapLoad([], setStadiums)
                 }
 
             } else {
@@ -70,32 +66,43 @@ const StadiumMain = ({ title }) => {
         }
     }
 
-    const onSubmitSearch = (e) => {
-        e.preventDefault();
+    const onClickCardTitle = (index) => (e) => {
+        // State
+        setStadiums(myStadium)
+        setBtnMyStadium(true)
 
-        // let keyword = searchInput?.current?.value;
-
-        // if (keyword && keyword.length < 2) {
-        //     alert('검색어를 두 글자 이상 입력하세요.')
-        //     return false;
-        // }
-
-        // getMyStadiums();
-
-        console.log("검색");
+        // KakaoMap
+        showMyStadium(myStadium)
+        panTo(myStadium[index].y, myStadium[index].x);
+        closeOverlay();
+        setOverlay(index);
     }
-    const onClickPgn = (page) => (e) => {
 
-        // let keyword = searchInput?.current?.value;
+    const onClickCardCopy = (address) => (e) => {
+        navigator.clipboard.writeText(address)
+        alert('주소가 복사되었습니다.')
+    }
 
-        // if (keyword && keyword.length < 2) {
-        //     alert('검색어를 두 글자 이상 입력하세요.')
-        //     return false;
-        // }
+    const onClickCurrentSearch = () => {
+        showCurrentPosition(myStadium)
+        setBtnMyStadium(false)
+    }
 
-        // setCurrentPage(page)
-        // getMyStadiums();
-        console.log("페이지네이션");
+    const onClickMystadium = (e) => {
+        e.preventDefault();
+        if (!userData?.userNo) {
+            alert("로그인 후 사용 가능합니다.")
+            return false;
+        }
+
+        if (btnMyStadium) {
+            showCurrentPosition(myStadium)
+        }
+        else {
+            setStadiums(myStadium)
+            showMyStadium(myStadium)
+        }
+        setBtnMyStadium(!btnMyStadium)
     }
 
     const onClickSave = (stadiumInfo, userNo) => async (e) => {
@@ -116,6 +123,7 @@ const StadiumMain = ({ title }) => {
 
                     let newData = {
                         myStadiumNo: result.data.insertId,
+                        id: selectedData.id,
                         mapId: selectedData.id,
                         place_name: selectedData.place_name,
                         address_name: selectedData?.address_name
@@ -124,6 +132,7 @@ const StadiumMain = ({ title }) => {
                         road_address_name: selectedData?.road_address_name
                             ? selectedData.road_address_name
                             : '',
+                        userNo: userNo,
                         x: selectedData.x,
                         y: selectedData.y,
                     }
@@ -137,7 +146,9 @@ const StadiumMain = ({ title }) => {
                 }
                 else {
                     setMyStadium((prev) => {
-                        let temp = prev.filter(item => item.id !== stadiumInfo.id);
+                        let temp = prev.filter(item => {
+                            return (item.mapId !== stadiumInfo.id)
+                        });
                         return temp
                     })
                     e.target.classList.remove('act')
@@ -154,72 +165,161 @@ const StadiumMain = ({ title }) => {
         }
     }
 
-    const onClickMyStadiumList = () => {
-        console.log('asdsad');
-    }
 
+    // Slick
+    // let settings = {
+    //     dots: true,
+    //     infinite: true,
+    //     speed: 500,
+    //     slidesToShow: 3, // 화면에 보이는 컨텐츠 수
+    //     slidesToScroll: 1, // 스크롤 시 넘어가는 컨텐츠 수
+    //     arrows: true, // 좌,우 버튼
+    //     responsive: [ // 반응형 옵션 
+    //         {
+    //             breakpoint: 992, // (숫자)px 이하일 경우
+    //             settings: {
+    //                 slidesToShow: 2,
+    //                 arrows: true,
+    //             }
+    //         },
+    //         {
+    //             breakpoint: 576, // (숫자)px 이하일 경우
+    //             settings: {
+    //                 slidesToShow: 1,
+    //                 arrows: true,
+    //             }
+    //         }
+    //     ]
+    // };
+    const [settings, setSettings] = useState({
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3, // 화면에 보이는 컨텐츠 수
+        slidesToScroll: 1, // 스크롤 시 넘어가는 컨텐츠 수
+        arrows: true, // 좌,우 버튼
+        responsive: [ // 반응형 옵션 
+            {
+                breakpoint: 992, // (숫자)px 이하일 경우
+                settings: {
+                    slidesToShow: 2,
+                    arrows: true,
+                }
+            },
+            {
+                breakpoint: 576, // (숫자)px 이하일 경우
+                settings: {
+                    slidesToShow: 1,
+                    arrows: true,
+                }
+            }
+        ]
+    });
+    useEffect(() => {
+        if (myStadium.length <= 3) {
+            setSettings(prevSettings => ({
+                ...prevSettings,
+                slidesToShow: myStadium.length,
+                infinite: false,
+            }));
+        } else {
+            setSettings(prevSettings => ({
+                ...prevSettings,
+                slidesToShow: 3,
+                infinite: true,
+            }));
+        }
+    }, [myStadium]);
+
+    // Render
     return (
         <>
             <SubVisual pageTitle={title} />
             <div className='container stadium'>
                 <div className='inner'>
-                    <div style={{ padding: "50px 0 0" }}>
-                        1. 구장검색<hr />
-                        2. 구장리스트 (10개씩) + 페이지네이션<hr />
-                        3. 회원의 경우, 자주찾는구장 리스트 표시 또는 카카오맵에 미리 마커표시<hr />
-                        4. 카카오맵 - 구장위치 마커표시 & 카카오 길찾기 연동 ㅇ<hr />
-                    </div>
-
                     <div className='container__content'>
 
                         {/* 즐겨찾기 */}
                         <div className='my-stadium'>
-                            <div>즐겨찾기</div>
+                            <div className='my-stadium__title'>즐겨찾기</div>
                             <div>
-                                {myStadium.length > 0 ?
+                                {
+                                    userData ?
+                                        myStadium.length > 0 ?
+                                        // ✏️ react-slick
+                                            <Slider {...settings}>
+                                                {
+                                                    myStadium.map((item, i) => {
+                                                        return (
+                                                            <div
+                                                                key={'mystadium-' + item.mapId}
+                                                                className='my-stadium__item'
+                                                            >
+                                                                <div className="card">
+                                                                    <div className="card-body">
+                                                                        <h5
+                                                                            className="card-title mb-2"
+                                                                            onClick={onClickCardTitle(i)}
+                                                                        >
+                                                                            {item.place_name}
+                                                                        </h5>
+                                                                        <div className="mb-2">
+                                                                            <p className="card-text text-truncate">
+                                                                                {item.address_name}
+                                                                            </p>
+                                                                            <p className="road card-text text-truncate">
+                                                                                ({item.road_address_name})
+                                                                            </p>
+                                                                        </div>
+                                                                        <div>
+                                                                            <a href={`https://map.kakao.com/link/to/${item.place_name},${item.y},${item.x}`} target="_blank" className='card-btn-link'>
+                                                                                길찾기
+                                                                            </a>
+                                                                            <button
+                                                                                className='card-btn-link copy'
+                                                                                onClick={
+                                                                                    onClickCardCopy(item?.address_name)
+                                                                                }
+                                                                            >
+                                                                                주소복사
+                                                                            </button>
+                                                                        </div>
 
-                                    <ul>
-                                        {myStadium.map((item, i) => {
-                                            return (
-                                                <li key={'mystadium-' + item.id} onClick={onClickMyStadiumList}>{item.place_name}</li>
-                                            )
-                                        })}
-                                    </ul>
-
-                                    :
-                                    <p>로그인 후 이용가능한 기능입니다.</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </Slider>
+                                            :
+                                            <p style={{ fontSize: "13px" }}>등록된 장소가 없습니다.</p>
+                                        :
+                                        <p style={{ fontSize: "13px" }}>로그인 후 이용가능한 기능입니다.</p>
                                 }
 
                             </div>
                         </div>
 
                         {/* 버튼 */}
-                        <div style={{ padding: "20px", marginBottom: "60px", border: "1px solid " }}>
+                        <div style={{ padding: "20px", border: "1px solid" }}>
                             <button
                                 type="button"
                                 className="btn btn-outline-secondary btn-sm"
-                                onClick={() => { }}
-                            >현재 지도에서 검색</button>
-
-                            &nbsp;&nbsp;
-
+                                onClick={onClickCurrentSearch}
+                            >
+                                현재 지도에서 검색
+                            </button>&nbsp;&nbsp;
                             <button
                                 type="button"
-                                className="btn btn-outline-secondary btn-sm"
-                                onClick={() => { }}
+                                className={`btn btn-sm ${btnMyStadium ? 'btn-secondary' : 'btn-outline-secondary'}`}
+                                onClick={onClickMystadium}
                             >즐겨찾기 보기</button>
                         </div>
-
 
                         {/* 구장 리스트 + 지도 */}
                         <div className='stadium-wrap'>
                             <div className='stadium__left'>
-                                {/* <div className='stadium__search'>
-                                    <form className='stadium__search-form' onSubmit={onSubmitSearch}>
-                                        <input ref={searchInput} className='input' placeholder='구장명을 입력해주세요.' />
-                                        <button className='btn btn-outline-secondary'>검색</button>
-                                    </form>
-                                </div> */}
                                 <div className='stadium__list'>
                                     <ul>
                                         {
@@ -256,34 +356,6 @@ const StadiumMain = ({ title }) => {
                                             <li>검색결과가 없습니다.</li>
                                         }
                                     </ul>
-
-                                    {/* Pgn */}
-                                    <div className='pagination-wrap'>
-                                        <ul className="pagination pagination-sm">
-                                            <li className="page-item" aria-label="FirstPage" onClick={onClickPgn(1)}>
-                                                <span className="page-link">&laquo;</span>
-                                            </li>
-
-                                            {
-                                                // pgnNumbers.map(number => (
-                                                //     <li
-                                                //         key={"pgn-" + number}
-                                                //         className={`page-item ${number == currentPage ? 'active' : ''}`}
-                                                //         onClick={onClickPgn(number)}
-                                                //     >
-                                                //         <span className="page-link">{number}</span>
-                                                //     </li>
-                                                // ))
-                                            }
-
-                                            <li className="page-item" aria-label="LastPage" onClick={
-                                                () => { }
-                                                //    onClickPgn(pgnLastNum)
-                                            }>
-                                                <span className="page-link">&raquo;</span>
-                                            </li>
-                                        </ul>
-                                    </div>
                                 </div>
                             </div>
 
