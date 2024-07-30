@@ -199,7 +199,7 @@ const StadiumMain = ({ title }) => {
                                 type="button"
                                 className="btn btn-outline-secondary btn-sm"
                                 onClick={() => { }}
-                            >현재 위치에서 검색</button>
+                            >현재 지도에서 검색</button>
 
                             &nbsp;&nbsp;
 
