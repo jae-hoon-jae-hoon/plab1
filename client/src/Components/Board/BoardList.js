@@ -6,17 +6,15 @@ import './Board.css'
 
 // Components
 import SubVisual from '../SubVisual/SubVisual'
+import Search from '../Search/Search'
+import Pagination from '../Pagination/Pagination'
 
 // Library
 import axios from 'axios'
-import Pagination from '../Pagination/Pagination'
 import { useQueryParams } from '../../commonFunc/url'
-import Search from '../Search/Search'
 
 
 const BoardList = ({ title }) => {
-    console.log("BoardList");
-
     const location = useLocation();
     const queryParams = useQueryParams(location);
 

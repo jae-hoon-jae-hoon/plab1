@@ -87,7 +87,7 @@ function kakaomapSearch(kakaoLatLng) {
         radius: 3000, // 위 좌표로부터 거리 필터링 값
         sort: kakao.maps.services.SortBy.DISTANCE, // DISTANCE or ACCURACY(default)
     }
-    ps.keywordSearch('풋살장', placesSearchCB, psOptions);
+    ps.keywordSearch('축구', placesSearchCB, psOptions);
     // placesSearchCB: 키워드 검색 완료 시 호출되는 콜백함수 입니다
 }
 

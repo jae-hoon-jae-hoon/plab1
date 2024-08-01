@@ -75,7 +75,7 @@ router.post('/list', async (req, res) => {
         return result;
     }
     
-    const perPage = 2; // ⚽ 완성후 값수정
+    const perPage = 5; // ⚽ 완성후 값수정
 
     // Total List Count
     const totalListCnt = await getTotalListCnt(keyword);

@@ -3,8 +3,6 @@ import { useGetPathName } from '../../commonFunc/url'
 import { useNavigate } from 'react-router-dom';
 
 const Search = React.memo(({ keyword, setKeyword, setCurrentPage }) => {
-    console.log("Search");
-
     let path = useGetPathName();
 
     // State
@@ -39,12 +37,10 @@ const Search = React.memo(({ keyword, setKeyword, setCurrentPage }) => {
 
     return (
         <>
-            <div className="container-fluid">
-                <form className="d-inline-flex" onSubmit={onSubmitSearch}>
-                    <input className="form-control me-2" placeholder="Search" aria-label="Search" value={searchInput} onChange={onChangeSearchInput} />
-                    <button className="btn btn-secondary">Search</button>
-                </form>
-            </div>
+            <form className="d-inline-flex" onSubmit={onSubmitSearch}>
+                <input className="form-control me-2" placeholder="Search" aria-label="Search" value={searchInput} onChange={onChangeSearchInput} />
+                <button className="btn btn-secondary">Search</button>
+            </form>
         </>
     )
 })

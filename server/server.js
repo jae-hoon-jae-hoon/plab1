@@ -45,6 +45,7 @@ app.use('/api/member', require('./Routes/Member/member'))
 app.use('/api/board', require('./Routes/Board/board'));
 
 app.use('/api/stadium', require('./Routes/Stadium/stadium'));
+app.use('/api/team', require('./Routes/Team/team'));
 
 
 const PORT = 5000;

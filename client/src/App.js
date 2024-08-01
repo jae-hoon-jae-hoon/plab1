@@ -49,6 +49,7 @@ function App() {
 
         {/* Team */}
         <Route path="/team" element={<TeamMain title={"팀 관리"} />} />
+        <Route path="/team/myteam/:id" element={<TeamMain title={"팀 관리"} />} />
 
         {/* Stadium */}
         <Route path="/stadium" element={<StadiumMain title={"구장 찾기"} />} />
