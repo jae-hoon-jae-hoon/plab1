@@ -26,7 +26,7 @@
 
 .team-list__item .card-img-top {
     display: inline-block;
-    max-width: 300px;
+    /* max-width: 300px; */
     height: 210px;
     margin: 0 auto;
     object-fit: cover;
@@ -47,6 +47,26 @@
     margin-top: 10px;
 }
 
+/* Team Detail Modal */
+.detail-modal {}
+
+.detail-modal .img-wrap {
+    display: flex;
+    justify-content: center;
+}
+.detail-modal .content-wrap {
+    padding: 20px 0;
+    border-bottom: 1px solid lightgray;
+}
+
+.detail-modal .content-wrap.name {
+    border-bottom: 0;
+}
+.detail-modal .content-wrap.name h5{
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 0;
+}
 
 /* TeamAdd */
 .add-form {

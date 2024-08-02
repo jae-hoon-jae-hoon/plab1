@@ -195,6 +195,58 @@ router.post('/addTeam', upload.single('img'), (req, res) => {
     }
 })
 
+/* 팀 가입 신청 */
+router.post('/joinTeam', async (req, res) => {
+    let result = { success: false, message: "" }
+
+    const { userNo, teamNo } = req.body
+
+    // Validation
+    if (!userNo || !teamNo) {
+        result.message = "User Data Error"
+        return res.status(400).json(result)
+    }
+
+    let selectSql = "SELECT * FROM team_join WHERE teamNo = ? AND userNo = ?"
+    let selectParams = [teamNo, userNo]
+    db.query(selectSql, selectParams, (err, results) => {
+        if (err) {
+            result.message = "Select Error"
+            return res.status(500).json(result)
+        }
+
+        if (results.length > 0) {
+            if (results[0].status === 1) {
+                result.message = "status-1"
+                return res.json(result)
+
+            } else if (results[0].status === 2) {
+                result.message = "status-2"
+                return res.json(result)
+
+            } else if (results[0].status === 3) {
+                result.message = "status-3"
+                return res.json(result)
+            }
+        }
+        else {
+            // 추가
+            let regDate = formatDate();
+            let insertSql = "INSERT INTO team_join (teamNo, userNo, level, status, backnumber, regDate) VALUES (?, ?, ?, ?, ?, ?)"
+            let insertParams = [teamNo, userNo, 3, 3, '', regDate]
+            db.query(insertSql, insertParams, (err, insertResults) => {
+                if (err) {
+                    result.message = "Insert Error"
+                    return res.status(500).json(result)
+                }
+
+                result.success = true;
+                return res.status(201).json(result)
+            })
+        }
+    })
+})
+
 
 
 module.exports = router;

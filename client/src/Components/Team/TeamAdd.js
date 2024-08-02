@@ -56,12 +56,12 @@ const TeamAdd = ({ showAddForm, setShowAddForm, setTeamList }) => {
         let desc = descRef.current.value
 
         // Validation
-        if (name.trim() == '') {
+        if (name.trim() === '') {
             alert('팀이름을 입력해주세요.')
             nameRef.current.focus()
             return false;
         }
-        if (desc.trim() == '') {
+        if (desc.trim() === '') {
             alert('팀소개를 입력해주세요.')
             descRef.current.focus()
             return false;
@@ -112,7 +112,7 @@ const TeamAdd = ({ showAddForm, setShowAddForm, setTeamList }) => {
                             <div className='add-form__row'>
                                 <div className='label-wrap'>
                                     <label htmlFor='teamlogo' className='label-teamlogo'>
-                                        <img src={imgPreview ? imgPreview : no_img} />
+                                        <img src={imgPreview ? imgPreview : no_img} alt=""/>
                                     </label>
                                     <label htmlFor='teamlogo' className='btn btn-sm btn-outline-secondary'>
                                         이미지 업로드

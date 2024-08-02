@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom'
 import myteam_img from './../../imgs/myteam_img.png'
 import no_img from './../../imgs/no_img.png'
 
-
 // Css
 import './Team.css'
 
@@ -21,11 +20,19 @@ import { useQueryParams } from '../../commonFunc/url'
 import Pagination from '../Pagination/Pagination'
 import Search from '../Search/Search'
 
+// Redux
+import { useSelector } from 'react-redux';
+
 
 const TeamMain = ({ title }) => {
 
     const location = useLocation();
     const queryParams = useQueryParams(location);
+
+    // Redux
+    const userData = useSelector((state) => {
+        return state.member.userData
+    });
 
     // State
     const [currentPage, setCurrentPage] = useState(1);
@@ -37,6 +44,15 @@ const TeamMain = ({ title }) => {
 
     const [pgnLastNum, setPgnLastNum] = useState(0);
     const [pgnNumbers, setPgnNumbers] = useState([]);
+
+    const [detail, setDetail] = useState({
+        teamNo: '',
+        teamName: '',
+        teamDesc: '',
+        teamImgPath: '',
+        player: [],
+        record: []
+    })
 
     const [showAddForm, setShowAddForm] = useState(false);
     const [showTeamDetail, setShowTeamDetail] = useState(false)
@@ -75,11 +91,82 @@ const TeamMain = ({ title }) => {
 
     const onClickShowDetail = (teamNo) => (e) => {
         e.preventDefault();
+
+        let selected = teamList.filter(item => item.teamNo === teamNo)
+        if (selected.length === 0) {
+            setDetail({
+                teamNo: '',
+                teamName: '',
+                teamDesc: '',
+                teamImgPath: '',
+                player: [],
+                record: []
+            })
+            alert("팀 정보를 불러오지 못했습니다.")
+            return
+        }
+        selected = selected[0]
+
+        // 선수정보불러오는 axios
+        // 기록불러오는 axios
+
+        setDetail((prev) => {
+            let temp = {
+                teamNo: teamNo,
+                teamName: selected.teamName,
+                teamDesc: selected.teamDesc,
+                teamImgPath: selected.teamImgPath ? selected.teamImgPath : no_img,
+
+                // player:[],
+                // record:[],
+            }
+            return temp;
+        })
+
         setShowTeamDetail(true)
     }
     const onClickCloseDetail = (e) => {
         e.preventDefault();
         setShowTeamDetail(false)
+    }
+    const onClickJoinTeam = (teamNo) => async (e) => {
+        e.preventDefault();
+
+        // 로그인 검사
+        if (!userData?.userNo) {
+            alert("로그인 후 사용 가능합니다.")
+            return false;
+        }
+
+        let data = {
+            userNo: userData?.userNo,
+            teamNo
+        }
+
+        try {
+            let joinResult = await axios.post('/api/team/joinTeam', data)
+            if (joinResult.data.success) {
+                alert("가입신청이 완료되었습니다.")
+                return;
+            } else {
+                throw joinResult.data.message
+            }
+        } catch (error) {
+            if (error === 'status-1') {
+                alert('이미 가입된 회원입니다.')
+                return;
+            } else if (error === 'status-2') {
+                alert('가입이 거절된 회원입니다.')
+                return;
+            }
+            else if (error === 'status-3') {
+                alert('가입 대기중인 회원입니다.')
+                return;
+            } else {
+                alert('가입신청에 실패했습니다.')
+                return false;
+            }
+        }
     }
 
     // Render
@@ -185,7 +272,7 @@ const TeamMain = ({ title }) => {
                         </div>
 
                         {/* 팀 상세페이지 모달 */}
-                        <div className="modal" tabIndex="-1"
+                        <div className="modal detail-modal" tabIndex="-1"
                             style={{ display: showTeamDetail ? "block" : "none" }}
                         >
                             <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -195,15 +282,36 @@ const TeamMain = ({ title }) => {
                                         <button className="btn-close" onClick={onClickCloseDetail}></button>
                                     </div>
                                     <div className="modal-body">
-                                        팀로고<br></br>
-                                        팀이름<br></br>
-                                        팀설명<br></br>
-                                        선수정보-axios<br></br>
-                                        최근전적-axios<br></br>
+                                        <div className='img-wrap'>
+                                            <img src={detail.teamImgPath} alt={detail.teamName + '이미지'} height="200px" />
+                                        </div>
+                                        <div className='content-wrap name'>
+                                            <h5>{detail.teamName}</h5>
+                                        </div>
+                                        <div className='content-wrap desc'>
+                                            <p>{detail.teamDesc}</p>
+                                        </div>
+
+                                        <div className='content-wrap player'>
+                                            <div>⚽선수정보</div>
+                                            <ul>
+                                                <li>7. 손흥민</li>
+                                                <li>13. 박지성</li>
+                                                <li>19. 이강인</li>
+                                            </ul>
+                                        </div>
+                                        <div className='content-wrap record'>
+                                            <div>⚽최근 전적</div>
+                                            <ul>
+                                                <li>하한마FS 1 : 0 상대팀1</li>
+                                                <li>하한마FS 2 : 0 상대팀2</li>
+                                                <li>하한마FS 3 : 0 상대팀3</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                     <div className="modal-footer">
                                         <button className="btn btn-secondary" onClick={onClickCloseDetail}>닫기</button>
-                                        <button className="btn btn-primary">⚽가입신청</button>
+                                        <button className="btn btn-primary" onClick={onClickJoinTeam(detail.teamNo)}>⚽가입신청</button>
                                     </div>
                                 </div>
                             </div>
