@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 // Imgs
 import myteam_img from './../../imgs/myteam_img.png'
@@ -35,9 +35,10 @@ const TeamMain = ({ title }) => {
     });
 
     // State
+    const [myTeam, setMyTeam] = useState(null)
+
     const [currentPage, setCurrentPage] = useState(1);
     const [keyword, setKeyword] = useState('')
-
     const [teamList, setTeamList] = useState([]);
     // const [totalListCnt, setTotalListCnt] = useState(0);
     // const [listStartNum, setListStartNum] = useState(0);
@@ -59,6 +60,35 @@ const TeamMain = ({ title }) => {
 
 
     // useEffect
+    useEffect(() => {
+        // getMyTeam
+        if (userData?.userNo) {
+            let data = {
+                userNo: userData?.userNo
+            }
+
+            axios.post('/api/team/getMyTeam', data)
+                .then(result => {
+                    if (result.data.success) {
+                        setMyTeam(result.data.data)
+                    } else {
+                        alert("MyTeam 불러오는 도중 에러가 발생했습니다.");
+                        setMyTeam(null)
+                    }
+                })
+                .catch(err => {
+                    // console.log(err);
+                    // console.log("MyTeam 불러오는 도중 에러가 발생했습니다.");
+                    alert("MyTeam 불러오는 도중 에러가 발생했습니다.");
+                    setMyTeam(null)
+                })
+
+        } else {
+            setMyTeam(null)
+        }
+
+
+    }, [userData])
     useEffect(() => {
         setCurrentPage(queryParams.get('page') ?? 1)
         setKeyword(queryParams.get('keyword') ?? '')
@@ -192,30 +222,44 @@ const TeamMain = ({ title }) => {
                         {/* My Team */}
                         <div>
                             My Team
-                            {/* 팀생성 Button */}
-                            <div className='team-list__btn'>
-                                <button className='btn btn-secondary'>팀 관리</button>
-                            </div>
 
-                            <div className="card mb-3">
-                                <div className="row g-0">
-                                    <div className="col-md-3 p-2">
-                                        <img src={myteam_img} className="img-fluid rounded-start" alt="My team 이미지" style={{ maxWidth: "100%" }} />
-                                    </div>
-                                    <div className="col-md-9">
-                                        <div className="card-body">
-                                            <h5 className="card-title">My Team 이름</h5>
-                                            <p className="card-text">My Team 소개~ My Team 소개~ My Team 소개~ My Team 소개~ My Team 소개~ My Team 소개~ </p>
-                                            <p className="card-text">
-                                                <small className="text-muted">추가정보1</small>
-                                            </p>
-                                            <p className="card-text">
-                                                <small className="text-muted">추가정보2</small>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {userData ?
+                                myTeam ?
+                                    myTeam.map((item, idx) => {
+                                        let thumbnail = item.teamImgPath ? item.teamImgPath : no_img
+                                        return (
+                                            <div key={"myTeam-" + item.teamNo}>
+                                                <div className='team-list__btn'>
+                                                    <Link to={"/team/myteam/" + 1}>
+                                                        <button className="btn btn-secondary">My팀 관리</button>
+                                                    </Link>
+                                                </div>
+
+                                                <div key={"myTeam-" + item.teamNo} className="card mb-3">
+                                                    <div className="row g-0">
+                                                        <div className="col-md-3 p-2">
+                                                            <img src={thumbnail} className="img-fluid rounded-start" alt="My team 이미지" style={{ maxWidth: "100%" }} />
+                                                        </div>
+                                                        <div className="col-md-9">
+                                                            <div className="card-body">
+                                                                <h5 className="card-title">{item.teamName}</h5>
+                                                                <p className="card-text">{item.teamDesc}</p>
+                                                                <p className="card-text">
+                                                                    <small className="text-muted">추가정보1</small>
+                                                                </p>
+                                                                <p className="card-text">
+                                                                    <small className="text-muted">추가정보2</small>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                    : <p style={{ fontSize: "13px" }}>가입된 My팀이 없습니다.</p>
+                                : <p style={{ fontSize: "13px" }}>로그인 후 이용가능한 기능입니다.</p>
+                            }
                         </div>
 
                         {/* Team List */}

@@ -18,6 +18,7 @@ import BoardDetail from './Components/Board/BoardDetail';
 
 // Team
 import TeamMain from './Components/Team/TeamMain';
+import MyTeam from './Components/Team/MyTeam';
 
 // Stadium
 import StadiumMain from './Components/Stadium/StadiumMain';
@@ -49,7 +50,7 @@ function App() {
 
         {/* Team */}
         <Route path="/team" element={<TeamMain title={"팀 관리"} />} />
-        <Route path="/team/myteam/:id" element={<TeamMain title={"팀 관리"} />} />
+        <Route path="/team/myteam/:id" element={<MyTeam title={"My팀 관리"} />} />
 
         {/* Stadium */}
         <Route path="/stadium" element={<StadiumMain title={"구장 찾기"} />} />

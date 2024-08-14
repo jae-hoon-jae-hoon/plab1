@@ -145,6 +145,42 @@ router.post('/getTeamList', async (req, res) => {
     return res.status(200).json(result)
 })
 
+/* My Team 불러오기 */
+router.post('/getMyTeam', (req, res) => {
+    let result = { success: false, message: "" }
+
+    const { userNo } = req.body
+
+    // validation
+    if (!userNo) {
+        result.message = "User Data Error"
+        return res.status(400).json(result)
+    }
+
+    let sql = `SELECT TJ.teamJoinNo, T.* FROM team_join AS TJ
+                    JOIN team AS T
+                    ON TJ.userNo = ? AND TJ.teamNo = T.teamNo
+                    `
+    let params = [userNo]
+    db.query(sql, params, (err, results) => {
+        if (err) {
+            result.message = "Select Error"
+            return res.status(500).json(result)
+        }
+
+        if (results) {
+            result.success = true
+            result.message = "Success"
+            result.data = results
+            return res.status(200).json(result)
+        }
+        else {
+            result.message = "No Result"
+            return res.status(200).json(result)
+        }
+    })
+})
+
 /* 팀 만들기 */
 router.post('/addTeam', upload.single('img'), (req, res) => {
     let result = { success: false, message: "" }
