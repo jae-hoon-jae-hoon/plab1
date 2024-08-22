@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
+// Redux
+import { useSelector } from 'react-redux';
+
 // Css
 import './Stadium.css'
 
@@ -15,9 +18,6 @@ import { closeOverlay, kakaoMapLoad, panTo, setOverlay, showCurrentPosition, sho
 import Slider from "react-slick";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
-// Redux
-import { useSelector } from 'react-redux';
 
 
 const StadiumMain = ({ title }) => {

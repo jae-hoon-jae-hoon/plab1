@@ -96,7 +96,7 @@ const TeamAdd = ({ showAddForm, setShowAddForm, setTeamList }) => {
             })
     }
 
-
+    // Render
     return (
         <div className="modal" tabIndex="-1"
             style={{ display: showAddForm ? "block" : "none" }}
@@ -112,7 +112,7 @@ const TeamAdd = ({ showAddForm, setShowAddForm, setTeamList }) => {
                             <div className='add-form__row'>
                                 <div className='label-wrap'>
                                     <label htmlFor='teamlogo' className='label-teamlogo'>
-                                        <img src={imgPreview ? imgPreview : no_img} alt=""/>
+                                        <img src={imgPreview ? imgPreview : no_img} alt="" />
                                     </label>
                                     <label htmlFor='teamlogo' className='btn btn-sm btn-outline-secondary'>
                                         이미지 업로드

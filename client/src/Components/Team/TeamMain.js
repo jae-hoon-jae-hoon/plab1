@@ -59,9 +59,8 @@ const TeamMain = ({ title }) => {
     const [showTeamDetail, setShowTeamDetail] = useState(false)
 
 
-    // useEffect
+    // useEffect - myTeam
     useEffect(() => {
-        // getMyTeam
         if (userData?.userNo) {
             let data = {
                 userNo: userData?.userNo
@@ -89,11 +88,12 @@ const TeamMain = ({ title }) => {
 
 
     }, [userData])
+
+    // useEffect - teamList
     useEffect(() => {
         setCurrentPage(queryParams.get('page') ?? 1)
         setKeyword(queryParams.get('keyword') ?? '')
 
-        // getList
         let data = {
             currentPage,
             keyword,
@@ -137,28 +137,45 @@ const TeamMain = ({ title }) => {
         }
         selected = selected[0]
 
-        // 선수정보불러오는 axios
-        // 기록불러오는 axios
-
         setDetail((prev) => {
             let temp = {
+                ...prev,
                 teamNo: teamNo,
                 teamName: selected.teamName,
                 teamDesc: selected.teamDesc,
                 teamImgPath: selected.teamImgPath ? selected.teamImgPath : no_img,
-
-                // player:[],
-                // record:[],
             }
             return temp;
         })
 
+        Promise.all([
+            axios.post('/api/team/getDetailModalPlayerInfo', { teamNo }),
+            axios.post('/api/team/getDetailModalRecordInfo', { teamNo })
+        ])
+            .then(([playerResult, recordResult]) => {
+                if (playerResult.data.success && recordResult.data.success) {
+                    setDetail(prev => ({
+                        ...prev,
+                        player: playerResult.data.data,
+                        record: recordResult.data.data
+                    }));
+                } else {
+                    throw new Error("팀정보를 불러오는 도중 에러가 발생했습니다.");
+                }
+            })
+            .catch(err => {
+                setDetail(prev => ({ ...prev, player: [], record: [] }));
+                alert("팀정보를 불러오는 도중 에러가 발생했습니다.");
+            });
+
         setShowTeamDetail(true)
     }
+
     const onClickCloseDetail = (e) => {
         e.preventDefault();
         setShowTeamDetail(false)
     }
+
     const onClickJoinTeam = (teamNo) => async (e) => {
         e.preventDefault();
 
@@ -206,23 +223,11 @@ const TeamMain = ({ title }) => {
 
             <div className='container board board-list'>
                 <div className='inner'>
-                    {/* <div className='container__content'>
-                        1. My팀
-                        <br />
-                        - '가입된 팀이 없습니다.' OR 가입된 팀 정보
-                        <hr />
-                        2. 팀검색 & 팀만들기버튼 - 우측정렬
-                        <hr />
-                        3. 팀리스트 & 클릭 시 팀정보 팝업
-                        <hr />
-                    </div> */}
-
-
                     <div className='container__content'>
+
                         {/* My Team */}
                         <div>
                             My Team
-
                             {userData ?
                                 myTeam ?
                                     myTeam.map((item, idx) => {
@@ -292,7 +297,7 @@ const TeamMain = ({ title }) => {
                                                     <div className="card-body">
                                                         <h5 className="card-title">{item.teamName}</h5>
                                                         <p className="card-text">{item.teamDesc}</p>
-                                                        <button className="card-btn btn btn-outline-secondary" onClick={onClickShowDetail(item.teamNo)}>⚽팀정보 보기</button>
+                                                        <button className="card-btn btn btn-outline-secondary" onClick={onClickShowDetail(item.teamNo)}>팀정보 보기</button>
                                                     </div>
                                                 </div>
                                             </li>
@@ -337,25 +342,53 @@ const TeamMain = ({ title }) => {
                                         </div>
 
                                         <div className='content-wrap player'>
-                                            <div>⚽선수정보</div>
-                                            <ul>
-                                                <li>7. 손흥민</li>
-                                                <li>13. 박지성</li>
-                                                <li>19. 이강인</li>
-                                            </ul>
+                                            <h6 class="content-wrap__title">선수정보</h6>
+                                            {detail.player && detail.player.length > 0
+                                                ?
+                                                <table className='table-sm table-bordered text-center'>
+                                                    <colgroup>
+                                                        <col width="80px" />
+                                                        <col width="200px" />
+                                                    </colgroup>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>등번호</th>
+                                                            <th>이름</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            detail.player.map(item => {
+                                                                return (
+                                                                    <tr key={"detail-player" + item.teamJoinNo}>
+                                                                        <td>{item.backnumber}</td>
+                                                                        <td>{item.userName}</td>
+                                                                    </tr>
+                                                                )
+                                                            })
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                                : <p>가입된 선수가 존재하지 않습니다.</p>
+                                            }
                                         </div>
                                         <div className='content-wrap record'>
-                                            <div>⚽최근 전적</div>
-                                            <ul>
-                                                <li>하한마FS 1 : 0 상대팀1</li>
-                                                <li>하한마FS 2 : 0 상대팀2</li>
-                                                <li>하한마FS 3 : 0 상대팀3</li>
-                                            </ul>
+                                            <h6 class="content-wrap__title">최근 전적</h6>
+                                            {detail.record && detail.record.length > 0
+                                                ? <ul className='record-list'>
+                                                    {detail.record.map(item => {
+                                                        return (
+                                                            <li key={"detail-record-" + item.teamRecordNo}>{detail.teamName} {item.myScore} : {item.opponentScore} {item.opponentName}</li>
+                                                        )
+                                                    })}
+                                                </ul>
+                                                : <p>기록된 전적이 존재하지 않습니다.</p>
+                                            }
                                         </div>
                                     </div>
                                     <div className="modal-footer">
                                         <button className="btn btn-secondary" onClick={onClickCloseDetail}>닫기</button>
-                                        <button className="btn btn-primary" onClick={onClickJoinTeam(detail.teamNo)}>⚽가입신청</button>
+                                        <button className="btn btn-primary" onClick={onClickJoinTeam(detail.teamNo)}>가입신청</button>
                                     </div>
                                 </div>
                             </div>
@@ -372,7 +405,7 @@ const TeamMain = ({ title }) => {
 
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     )
 }
