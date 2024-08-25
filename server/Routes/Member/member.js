@@ -197,7 +197,7 @@ router.get('/logout', (req, res) => {
 router.post('/authorization', (req, res) => {
     const { userNo, userName } = req.body;
 
-    if(!userNo || !userName){
+    if (!userNo || !userName) {
         return res.json({ success: false, error: 'No User Data' })
     }
 
@@ -208,7 +208,8 @@ router.post('/authorization', (req, res) => {
         let verifyResult = verifyAccessToken(accessToken)
 
         // 1. accessToken 유효
-        if (verifyResult.userNo === userNo && verifyResult.userName === userName) {
+        if (verifyResult.userNo === userNo) {
+        // if (verifyResult.userNo === userNo && verifyResult.userName === userName) {
             return res.json({ success: true });
         }
         // 로그인정보 != 토큰정보
@@ -283,6 +284,137 @@ router.post('/authorization', (req, res) => {
             });
         }
     }
+})
+
+/* 마이페이지 */
+router.post('/getMypageInfo', (req, res) => {
+    const { userNo } = req.body
+
+    let result = { success: false, message: '' }
+
+    // Validation
+    if (!userNo) {
+        result.message = "User Data Error"
+        return res.status(400).json(result)
+    }
+
+    let sql = "SELECT userNo, userId, userName FROM member WHERE userNo = ?"
+    let param = [userNo]
+    db.query(sql, param, (err, results) => {
+        if (err) {
+            result.message = "Select Error"
+            return res.status(500).json(result)
+        }
+
+        if (results.length > 0) {
+            result.data = results[0]
+            result.success = true
+            result.message = "Select Success"
+            return res.json(result)
+        }
+        else {
+            result.message = "Select No Result"
+            return res.json(result)
+        }
+    })
+})
+/* 마이페이지 - 기본정보수정 */
+router.put('/updateInfo', (req, res) => {
+    const { userNo, userName } = req.body
+
+    let result = { success: false, message: '' }
+
+    // Validation
+    if (!userNo) {
+        result.message = "User Data Error"
+        return res.status(400).json(result)
+    }
+    if (userName === '') {
+        result.message = "User Data Error"
+        return res.status(400).json(result)
+    }
+
+    let sql = "UPDATE member SET userName = ? WHERE userNo = ?"
+    let param = [userName, userNo]
+
+    db.query(sql, param, (err, results) => {
+        if (err) {
+            result.message = "Update Error"
+            return res.status(500).json(result)
+        }
+
+        if (results.affectedRows === 1) {
+            result.success = true
+            result.message = "Update Success"
+            return res.status(200).json(result)
+        } else {
+            result.message = "Update Error"
+            return res.status(500).json(result)
+        }
+    })
+})
+/* 마이페이지 - 비밀번호변경 */
+router.put('/changePw', (req, res) => {
+    const { userNo, pw, newPw, newPwChk } = req.body
+
+    let result = { success: false, message: '' }
+
+    // Validation
+    if (!userNo) {
+        result.message = "User Data Error"
+        return res.status(400).json(result)
+    }
+    if (pw === '' || newPw === '' || newPwChk === '') {
+        result.message = "User Data Error"
+        return res.status(400).json(result)
+    }
+    if (newPw !== newPwChk) {
+        result.message = "User Data Error"
+        return res.status(400).json(result)
+    }
+
+    // 비밀번호 검사
+    let loginSql = "SELECT * FROM member WHERE userNo = ?";
+    let loginParams = [userNo]
+    db.query(loginSql, loginParams, async (err, results) => {
+        if (err) {
+            result.message = "Pw Check Error"
+            return res.status(500).json(result)
+        }
+        if (results.length == 0) {
+            result.message = "Not Found User"
+            return res.status(400).json(result)
+        }
+
+        let userData = results[0];
+        const isMatch = await bcrypt.compare(pw, userData.userPw);
+        if (!isMatch) {
+            result.message = "pw";
+            return res.status(400).json(result);
+        }
+
+        // 비밀번호 변경
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPw, salt);
+
+        let sql = "UPDATE member SET userPw = ? WHERE userNo = ?"
+        let param = [hashedPassword, userNo]
+
+        db.query(sql, param, (err, results) => {
+            if (err) {
+                result.message = "Update Error"
+                return res.status(500).json(result)
+            }
+            if (results.affectedRows === 1) {
+                result.success = true
+                result.message = "Update Success"
+                return res.status(200).json(result)
+            } else {
+                result.message = "Update Error"
+                return res.status(500).json(result)
+            }
+        })
+    })
 })
 
 module.exports = router;

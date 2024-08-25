@@ -342,7 +342,7 @@ const TeamMain = ({ title }) => {
                                         </div>
 
                                         <div className='content-wrap player'>
-                                            <h6 class="content-wrap__title">선수정보</h6>
+                                            <h6 className="content-wrap__title">선수정보</h6>
                                             {detail.player && detail.player.length > 0
                                                 ?
                                                 <table className='table-sm table-bordered text-center'>
@@ -373,7 +373,7 @@ const TeamMain = ({ title }) => {
                                             }
                                         </div>
                                         <div className='content-wrap record'>
-                                            <h6 class="content-wrap__title">최근 전적</h6>
+                                            <h6 className="content-wrap__title">최근 전적</h6>
                                             {detail.record && detail.record.length > 0
                                                 ? <ul className='record-list'>
                                                     {detail.record.map(item => {

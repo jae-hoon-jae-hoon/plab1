@@ -10,6 +10,7 @@ import Main from './Components/Main/Main';
 // Member
 import Login from './Components/Member/Login';
 import SignUp from './Components/Member/SignUp';
+import Mypage from './Components/Member/Mypage';
 
 // Board
 import BoardList from './Components/Board/BoardList';
@@ -41,6 +42,7 @@ function App() {
         {/* Member */}
         <Route path="/login" element={<Login title={"로그인"} />} />
         <Route path="/signup" element={<SignUp title={"회원가입"} />} />
+        <Route path="/mypage" element={<Mypage title={"마이페이지"} />} />
 
         {/* Board */}
         <Route path="/board" element={<BoardList title={"자유게시판"} />} />
