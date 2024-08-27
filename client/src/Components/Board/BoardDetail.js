@@ -85,7 +85,7 @@ const BoardDetail = ({ title }) => {
         <>
             <SubVisual pageTitle={title} />
 
-            <div className='container board board-list'>
+            <div className='board board-detail'>
                 <div className='inner'>
                     <div className='container__content'>
 
@@ -96,37 +96,31 @@ const BoardDetail = ({ title }) => {
                                     <h2>{data.title}</h2>
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="col">
-                                    작성자: {data.userName}
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col">
-                                    작성일: {data.formatDate}
-                                </div>
+                            <div className='detail-info'>
+                                <span>작성자: {data.userName}</span>
+                                <span>작성일: {data.formatDate}</span>
                             </div>
 
                             {/* Write Button */}
-                            <div className="mt-3 text-end">
-                                {
-                                    (userData && userData.userNo === data.userNo) &&
-                                    <>
+                            {
+                                (userData && userData.userNo === data.userNo) &&
+                                <>
+                                    <div className="mt-3 text-end">
                                         <Link to={'/board/update/' + id} className='btn btn-outline-secondary btn-sm'>수정</Link>
                                         &nbsp;
                                         <button className='btn btn-outline-danger btn-sm' onClick={onClickDelete}>삭제</button>
-                                    </>
-                                }
-                            </div>
+                                    </div>
+                                </>
+                            }
 
-                            <div className="row mt-3" style={{ padding: "20px 0", borderTop: "1px solid #e5e5e5", borderBottom: "1px solid #e5e5e5" }}>
+                            <div className="detail-content" style={{  }}>
                                 <div className="col">
                                     {data.content}
                                 </div>
                             </div>
-                        </div>
 
-                        <button onClick={onClickGoBack}>목록으로</button>
+                            <button className='btn-go-list btn btn-outline-secondary' onClick={onClickGoBack}>목록으로</button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -427,24 +427,12 @@ const MyTeam = ({ title }) => {
   return (
     <>
       <SubVisual pageTitle={title} />
-      <div className='container stadium'>
+      <div className='stadium'>
         <div className='inner'>
           <div className='container__content'>
             <div>
               0. 팀관리 페이지 접속시, level값 검사 <br />
-
-              1. 팀 상세내역 수정가능하도록 ㅇ<br />
-
-              2. 가입된 팀원리스트 ㅇ<br />
-
-              3. 가입 신청한 사람 리스트 - 승인, 거절 버튼 ㅇ<br />
-
-              4. 최근 경기기록 리스트 ㅇ<br />
-
-              5. 경기기록 추가 폼
             </div>
-            <br /><br /><br /><br />
-            <br /><br /><br /><br />
 
             {/* 기본 정보 */}
             <div className='team-detail team-info'>
@@ -469,9 +457,9 @@ const MyTeam = ({ title }) => {
                   <textarea className='w-100 p-2' placeholder='팀 소개' value={teamDesc} onChange={(e) => { setTeamDesc(e.target.value) }} />
                 </div>
               </form>
-              <div>
+              <div className='text-end'>
                 {/* <button className="btn btn-secondary" onClick={onClickReset}>되돌리기</button> */}
-                <button className="btn btn-primary" onClick={onClickTeamInfoUpdate}>수정</button>
+                <button className="btn btn-outline-primary" onClick={onClickTeamInfoUpdate}>수정</button>
               </div>
             </div>
 
@@ -479,42 +467,45 @@ const MyTeam = ({ title }) => {
             {/* 팀원정보 */}
             <div className='team-detail member-list'>
               <h4>팀원정보</h4>
-              <table className="table text-center">
-                <colgroup>
-                  <col width="25%" />
-                  <col width="25%" />
-                  <col width="25%" />
-                  <col width="25%" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <td>이름</td>
-                    <td>등번호</td>
-                    <td>추가정보</td>
-                    <td>관리</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    memberList.length === 0
-                      ? <tr><td colSpan={4}>가입된 팀원이 없습니다.</td></tr>
-                      : memberList.map(item => {
-                        return (
-                          <tr key={"memberlist-" + item.teamJoinNo}>
-                            <td>{item.userName}</td>
-                            <td>{item.backnumber === '' ? '-' : item.backnumber}</td>
-                            <td>{item.etc}</td>
-                            <td>
-                              <button className='btn btn-outline-secondary btn-sm' onClick={onClickShowMemberModal(item)}>수정</button>
-                              &nbsp;
-                              <button className='btn btn-outline-danger btn-sm' onClick={onClickReleaseMemberList(item)}>방출</button>
-                            </td>
-                          </tr>
-                        )
-                      })
-                  }
-                </tbody>
-              </table>
+              <div className='table-wrap'>
+                <table className="table text-center">
+                  <colgroup>
+                    <col width="25%" />
+                    <col width="25%" />
+                    <col width="25%" />
+                    <col width="25%" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <td>이름</td>
+                      <td>등번호</td>
+                      <td>추가정보</td>
+                      <td>관리</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      memberList.length === 0
+                        ? <tr><td colSpan={4}>가입된 팀원이 없습니다.</td></tr>
+                        : memberList.map(item => {
+                          return (
+                            <tr key={"memberlist-" + item.teamJoinNo}>
+                              <td>{item.userName}</td>
+                              <td>{item.backnumber === '' ? '-' : item.backnumber}</td>
+                              <td>{item.etc}</td>
+                              <td>
+                                <button className='btn btn-outline-secondary btn-sm' onClick={onClickShowMemberModal(item)}>수정</button>
+                                &nbsp;
+                                <button className='btn btn-outline-danger btn-sm' onClick={onClickReleaseMemberList(item)}>방출</button>
+                              </td>
+                            </tr>
+                          )
+                        })
+                    }
+                  </tbody>
+                </table>
+              </div>
+
               {/* 팀원정보수정 모달 */}
               <UpdateMemberModal
                 modalMemberData={modalMemberData}
@@ -527,7 +518,7 @@ const MyTeam = ({ title }) => {
             {/* 팀원 가입 관리 */}
             <div className='team-detail join-list'>
               <h4>팀원 가입 관리</h4>
-              <div style={{ display: "flex", gap: "0 40px" }}>
+              <div className='table-wrap'>
                 <table className="table caption-top text-center">
                   <caption>가입 대기 리스트</caption>
                   <colgroup>
@@ -543,7 +534,7 @@ const MyTeam = ({ title }) => {
                   <tbody>
                     {
                       waitingList.length === 0
-                        ? <tr><td colSpan={2}>가입 대기중인 회원이 없습니다.</td></tr>
+                        ? <tr><td colSpan={2} className='no-result'>가입 대기중인 회원이 없습니다.</td></tr>
                         : waitingList.map(item => {
                           return (
                             <tr key={"waitingList-" + item.teamJoinNo}>
@@ -574,7 +565,7 @@ const MyTeam = ({ title }) => {
                   <tbody>
                     {
                       rejectList.length === 0
-                        ? <tr><td colSpan={2}>가입 거절된 회원이 없습니다.</td></tr>
+                        ? <tr><td colSpan={2} className='no-result'>가입 거절된 회원이 없습니다.</td></tr>
                         : rejectList.map(item => {
                           return (
                             <tr key={"rejectList-" + item.teamJoinNo}>
@@ -595,7 +586,7 @@ const MyTeam = ({ title }) => {
             {/* 경기기록 관리 */}
             <div className='team-detail record-list'>
               <h4>경기기록 관리</h4>
-              <button className='btn btn-outline-primary btn-sm btn-add' onClick={onClickAddRecord}>경기기록 추가</button>
+              <button className='btn btn-outline-primary btn-sm btn-add' onClick={onClickAddRecord}>추가</button>
               <table className="table text-center">
                 <colgroup>
                   <col width="auto" />
@@ -610,7 +601,7 @@ const MyTeam = ({ title }) => {
                 <tbody>
                   {
                     recordList.length === 0
-                      ? <tr><td colSpan={2}>입력된 경기기록이 없습니다.</td></tr>
+                      ? <tr><td colSpan={2} className='no-result'>입력된 경기기록이 없습니다.</td></tr>
                       : recordList.map(item => {
                         return (
                           <tr key={"recordList-" + item.teamRecordNo}>
@@ -819,7 +810,7 @@ function UpdateRecordModal({ teamNo, myTeamName, modalRecordData, showRecordUpda
       <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div className="modal-content">
           <div className="modal-header">
-            <h1 className="modal-title fs-5">경기기록수정</h1>
+            <h1 className="modal-title fs-5">경기기록관리</h1>
             <button className="btn-close" onClick={onClickClose}></button>
           </div>
           <div className="modal-body">

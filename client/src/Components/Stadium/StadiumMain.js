@@ -31,6 +31,8 @@ const StadiumMain = ({ title }) => {
     const [myStadium, setMyStadium] = useState([]); // 즐겨찾기 리스트
     const [btnMyStadium, setBtnMyStadium] = useState(false);
 
+    const [isShowList, setIsShowList] = useState(window.innerWidth > 1024 ? true : false);
+
     // useEffect
     useEffect(() => {
         getMyStadiums()
@@ -165,35 +167,9 @@ const StadiumMain = ({ title }) => {
         }
     }
 
-
-    // Slick
-    // let settings = {
-    //     dots: true,
-    //     infinite: true,
-    //     speed: 500,
-    //     slidesToShow: 3, // 화면에 보이는 컨텐츠 수
-    //     slidesToScroll: 1, // 스크롤 시 넘어가는 컨텐츠 수
-    //     arrows: true, // 좌,우 버튼
-    //     responsive: [ // 반응형 옵션 
-    //         {
-    //             breakpoint: 992, // (숫자)px 이하일 경우
-    //             settings: {
-    //                 slidesToShow: 2,
-    //                 arrows: true,
-    //             }
-    //         },
-    //         {
-    //             breakpoint: 576, // (숫자)px 이하일 경우
-    //             settings: {
-    //                 slidesToShow: 1,
-    //                 arrows: true,
-    //             }
-    //         }
-    //     ]
-    // };
     const [settings, setSettings] = useState({
         dots: true,
-        infinite: true,
+        infinite: false,
         speed: 500,
         slidesToShow: 3, // 화면에 보이는 컨텐츠 수
         slidesToScroll: 1, // 스크롤 시 넘어가는 컨텐츠 수
@@ -219,14 +195,14 @@ const StadiumMain = ({ title }) => {
         if (myStadium.length <= 3) {
             setSettings(prevSettings => ({
                 ...prevSettings,
-                slidesToShow: myStadium.length,
-                infinite: false,
+                slidesToShow: myStadium.length > 0 ? myStadium.length : 1,
+                // infinite: false,
             }));
         } else {
             setSettings(prevSettings => ({
                 ...prevSettings,
                 slidesToShow: 3,
-                infinite: true,
+                // infinite: true,
             }));
         }
     }, [myStadium]);
@@ -235,81 +211,87 @@ const StadiumMain = ({ title }) => {
     return (
         <>
             <SubVisual pageTitle={title} />
-            <div className='container stadium'>
+            <div className='stadium'>
                 <div className='inner'>
                     <div className='container__content'>
-
                         {/* 즐겨찾기 */}
                         <div className='my-stadium'>
-                            <div className='my-stadium__title'>즐겨찾기</div>
+                            <div className='my-stadium__title'>
+                                즐겨찾기
+                                {userData ?
+                                    "(" + myStadium.length + ")"
+                                    : ''
+                                }
+                            </div>
                             <div>
                                 {
                                     userData ?
                                         myStadium.length > 0 ?
-                                        // ✏️ react-slick
-                                            <Slider {...settings}>
-                                                {
-                                                    myStadium.map((item, i) => {
-                                                        return (
-                                                            <div
-                                                                key={'mystadium-' + item.mapId}
-                                                                className='my-stadium__item'
-                                                            >
-                                                                <div className="card">
-                                                                    <div className="card-body">
-                                                                        <h5
-                                                                            className="card-title mb-2"
-                                                                            onClick={onClickCardTitle(i)}
-                                                                        >
-                                                                            {item.place_name}
-                                                                        </h5>
-                                                                        <div className="mb-2">
-                                                                            <p className="card-text text-truncate">
-                                                                                {item.address_name}
-                                                                            </p>
-                                                                            <p className="road card-text text-truncate">
-                                                                                ({item.road_address_name})
-                                                                            </p>
-                                                                        </div>
-                                                                        <div>
-                                                                            <a href={`https://map.kakao.com/link/to/${item.place_name},${item.y},${item.x}`} target="_blank" className='card-btn-link'>
-                                                                                길찾기
-                                                                            </a>
-                                                                            <button
-                                                                                className='card-btn-link copy'
-                                                                                onClick={
-                                                                                    onClickCardCopy(item?.address_name)
-                                                                                }
+                                            // ✏️ react-slick
+                                            <div className='slider-wrap'>
+                                                <Slider {...settings}>
+                                                    {
+                                                        myStadium.map((item, i) => {
+                                                            return (
+                                                                <div
+                                                                    key={'mystadium-' + item.mapId}
+                                                                    className='my-stadium__item'
+                                                                >
+                                                                    <div className="card">
+                                                                        <div className="card-body">
+                                                                            <h5
+                                                                                className="card-title mb-2"
+                                                                                onClick={onClickCardTitle(i)}
                                                                             >
-                                                                                주소복사
-                                                                            </button>
-                                                                        </div>
+                                                                                {item.place_name}
+                                                                            </h5>
+                                                                            <div className="mb-2">
+                                                                                <p className="card-text text-truncate">
+                                                                                    {item.address_name}
+                                                                                </p>
+                                                                                <p className="road card-text text-truncate">
+                                                                                    ({item.road_address_name})
+                                                                                </p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <a href={`https://map.kakao.com/link/to/${item.place_name},${item.y},${item.x}`} target="_blank" className='card-btn-link'>
+                                                                                    길찾기
+                                                                                </a>
+                                                                                <button
+                                                                                    className='card-btn-link copy'
+                                                                                    onClick={
+                                                                                        onClickCardCopy(item?.address_name)
+                                                                                    }
+                                                                                >
+                                                                                    주소복사
+                                                                                </button>
+                                                                            </div>
 
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
-                                            </Slider>
+                                                            )
+                                                        })
+                                                    }
+                                                </Slider>
+                                            </div>
                                             :
                                             <p style={{ fontSize: "13px" }}>등록된 장소가 없습니다.</p>
                                         :
                                         <p style={{ fontSize: "13px" }}>로그인 후 이용가능한 기능입니다.</p>
                                 }
-
                             </div>
                         </div>
 
                         {/* 버튼 */}
-                        <div style={{ padding: "20px", border: "1px solid" }}>
+                        <div className='stadium-btn-wrap'>
                             <button
                                 type="button"
                                 className="btn btn-outline-secondary btn-sm"
                                 onClick={onClickCurrentSearch}
                             >
                                 현재 지도에서 검색
-                            </button>&nbsp;&nbsp;
+                            </button>
                             <button
                                 type="button"
                                 className={`btn btn-sm ${btnMyStadium ? 'btn-secondary' : 'btn-outline-secondary'}`}
@@ -319,7 +301,10 @@ const StadiumMain = ({ title }) => {
 
                         {/* 구장 리스트 + 지도 */}
                         <div className='stadium-wrap'>
-                            <div className='stadium__left'>
+                            <div className={isShowList ? 'stadium__left open' : 'stadium__left'}>
+                                <button className='stadium-left-btn' onClick={() => { setIsShowList(!isShowList) }}>
+                                    {isShowList ? '닫기' : '구장목록'}
+                                </button>
                                 <div className='stadium__list'>
                                     <ul>
                                         {
@@ -336,6 +321,7 @@ const StadiumMain = ({ title }) => {
                                                             panTo(item.y, item.x);
                                                             closeOverlay();
                                                             setOverlay(i);
+                                                            setIsShowList(false)
                                                         }}
                                                     >
                                                         <div className="stadium__list-name">

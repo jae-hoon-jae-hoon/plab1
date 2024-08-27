@@ -21,7 +21,7 @@ router.post('/idDuplChk', (req, res) => {
         return res.status(400).json(result)
     }
 
-    let duplSql = "SELECT * FROM MEMBER WHERE userId = ?"
+    let duplSql = "SELECT * FROM member WHERE userId = ?"
     let duplParams = [userId]
     db.query(duplSql, duplParams, (err, results) => {
         if (err) {
@@ -59,7 +59,7 @@ router.post('/signup', async (req, res) => {
     }
 
     // 아이디 중복검사
-    let duplSql = "SELECT * FROM MEMBER WHERE userId = ?"
+    let duplSql = "SELECT * FROM member WHERE userId = ?"
     let duplParams = [userId]
     db.query(duplSql, duplParams, (err, results) => {
         if (err) {
@@ -106,11 +106,11 @@ router.post('/login', (req, res) => {
     }
 
     // Login
-    let loginSql = "SELECT * FROM MEMBER WHERE userId = ?";
+    let loginSql = "SELECT * FROM member WHERE userId = ?";
     let loginParams = [userId]
     db.query(loginSql, loginParams, async (err, results) => {
         if (err) {
-            // console.log(err);
+            console.log(err);
             result.message = "Login DB Error"
             return res.status(500).json(result)
         }

@@ -221,12 +221,12 @@ const TeamMain = ({ title }) => {
         <>
             <SubVisual pageTitle={title} />
 
-            <div className='container board board-list'>
+            <div className='team'>
                 <div className='inner'>
                     <div className='container__content'>
 
                         {/* My Team */}
-                        <div>
+                        <div className='myteam'>
                             My Team
                             {userData ?
                                 myTeam ?
@@ -241,20 +241,14 @@ const TeamMain = ({ title }) => {
                                                 </div>
 
                                                 <div key={"myTeam-" + item.teamNo} className="card mb-3">
-                                                    <div className="row g-0">
-                                                        <div className="col-md-3 p-2">
-                                                            <img src={thumbnail} className="img-fluid rounded-start" alt="My team 이미지" style={{ maxWidth: "100%" }} />
+                                                    <div className="row g-0 thumbnail">
+                                                        <div className=" col-md-3 p-2">
+                                                            <img src={thumbnail} className="img-fluid rounded-start" alt="My team 이미지" />
                                                         </div>
                                                         <div className="col-md-9">
                                                             <div className="card-body">
                                                                 <h5 className="card-title">{item.teamName}</h5>
                                                                 <p className="card-text">{item.teamDesc}</p>
-                                                                <p className="card-text">
-                                                                    <small className="text-muted">추가정보1</small>
-                                                                </p>
-                                                                <p className="card-text">
-                                                                    <small className="text-muted">추가정보2</small>
-                                                                </p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -277,6 +271,7 @@ const TeamMain = ({ title }) => {
                                     keyword={keyword}
                                     setKeyword={setKeyword}
                                     setCurrentPage={setCurrentPage}
+                                    placeHolder={"팀이름을 입력해주세요."}
                                 />
                             </div>
 

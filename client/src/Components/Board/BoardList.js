@@ -60,7 +60,7 @@ const BoardList = ({ title }) => {
         <>
             <SubVisual pageTitle={title} />
 
-            <div className='container board board-list'>
+            <div className='board board-list'>
                 <div className='inner'>
                     <div className='container__content'>
                         {/* Search */}
@@ -127,14 +127,14 @@ const BoardListTable = React.memo(({ totalListCnt, listStartNum, list }) => {
                                 let listNo = listStartNum - i;
                                 return (
                                     <tr key={'board-list-' + item.boardNo}>
-                                        <th scope="row">{listNo}</th>
-                                        <td>
+                                        <td className='td-no'>{listNo}</td>
+                                        <td className='td-title'>
                                             <Link to={`/board/detail/${item.boardNo}`} className='d-block'>
                                                 {item.title}
                                             </Link>
                                         </td>
-                                        <td>{item.userName}</td>
-                                        <td>{item.formatDate}</td>
+                                        <td  className='td-writer'>{item.userName}</td>
+                                        <td  className='td-date'>{item.formatDate}</td>
                                     </tr>
                                 )
                             })

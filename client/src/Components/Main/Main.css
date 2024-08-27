@@ -1,15 +1,24 @@
 .main {
-    background-color: #25852B;
+    /* background-color: #25852B; */
+    /* background-color: #0E104F; */
 }
 
 .main-sec {
     display: flex;
     justify-content: center;
     align-items: center;
+    /* padding-top: 80px; */
+    /* background-color: #25852B; */
+    /* background-color: #0E104F; */
+}
+
+.main-sec:first-child {
     padding-top: 80px;
-    background-color: #25852B;
 }
 
 .main-img {
-    max-width: 100%
+    /* max-width: 100% */
+    width: 100%;
+    object-fit: cover;
 }
+

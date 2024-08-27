@@ -1,10 +1,97 @@
-
-.board__search-wrap{
+/* Board List */
+.board__search-wrap {
     margin-bottom: 10px;
     text-align: center;
 }
 
-.board__write-btn-wrap{
+/* Board Detail */
+.detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px 16px;
+}
+
+.detail-content {
+    padding: 20px 0;
+    margin: 20px 0 40px 0;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+/* Board Write */
+.board__write-btn-wrap {
     margin-bottom: 20px;
     text-align: right;
+}
+
+.btn-go-list {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+@media (max-width: 767px) {
+
+    /* Board List */
+    .board-list table thead {
+        display: none;
+    }
+
+    .board-list table tr {
+        display: flex;
+        width: 100%;
+        flex-wrap: wrap;
+        padding: 10px 16px;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .board-list table tr:hover {
+        /* background-color: #e5e5e5; */
+        background-color: rgba(0, 0, 0, 0.075);
+    }
+
+    .board-list table td {
+        display: block;
+        /* width: 100%; */
+        padding: 5px 6px !important;
+        border: none;
+    }
+
+    .board-list table .td-no {
+        display: none;
+    }
+
+    .board-list table .td-title {
+        width: 100%;
+        padding: 8px 0;
+        font-size: 20px;
+        text-align: left;
+    }
+
+    .td-writer {
+        position: relative;
+        font-size: 14px;
+    }
+
+    .td-writer::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 100%;
+        height: 10px;
+        border-right: 1px solid #ccc;
+        transform: translateY(-50%);
+
+    }
+
+    .td-date {
+        font-size: 14px;
+    }
+
+
+    /* Board Detail */
+    .detail-info span {
+        font-size: 14px;
+    }
 }

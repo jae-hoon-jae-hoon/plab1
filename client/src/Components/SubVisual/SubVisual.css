@@ -14,3 +14,9 @@
     color: #000;
     text-align: center;
 }
+
+@media screen and (max-width: 767px) {
+    .sub-visual__title{
+        font-size: 25px;
+    }
+}
