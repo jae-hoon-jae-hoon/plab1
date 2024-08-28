@@ -131,7 +131,7 @@ const TeamAdd = ({ showAddForm, setShowAddForm, setTeamList }) => {
                         </form>
                     </div>
                     <div className="modal-footer">
-                        <button className="btn btn-secondary" onClick={onClickCloseAddTeam}>닫기</button>
+                        <button className="btn btn-outline-secondary" onClick={onClickCloseAddTeam}>닫기</button>
                         <button className="btn btn-primary" onClick={onClickSave}>저장</button>
                     </div>
                 </div>

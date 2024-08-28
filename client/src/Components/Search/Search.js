@@ -39,7 +39,7 @@ const Search = React.memo(({ keyword, setKeyword, setCurrentPage, placeHolder })
         <>
             <form className="d-inline-flex" onSubmit={onSubmitSearch}>
                 <input className="form-control me-2" placeholder={placeHolder ? placeHolder : '검색어를 입력해주세요.'} aria-label="Search" value={searchInput} onChange={onChangeSearchInput} />
-                <button className="btn btn-secondary">Search</button>
+                <button className="btn btn-outline-secondary">Search</button>
             </form>
         </>
     )

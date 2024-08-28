@@ -382,7 +382,7 @@ const TeamMain = ({ title }) => {
                                         </div>
                                     </div>
                                     <div className="modal-footer">
-                                        <button className="btn btn-secondary" onClick={onClickCloseDetail}>닫기</button>
+                                        <button className="btn btn-outline-secondary" onClick={onClickCloseDetail}>닫기</button>
                                         <button className="btn btn-primary" onClick={onClickJoinTeam(detail.teamNo)}>가입신청</button>
                                     </div>
                                 </div>

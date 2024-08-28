@@ -119,7 +119,7 @@ const BoardDetail = ({ title }) => {
                                 </div>
                             </div>
 
-                            <button className='btn-go-list btn btn-outline-secondary' onClick={onClickGoBack}>목록으로</button>
+                            <button className='btn-go-list btn btn-secondary' onClick={onClickGoBack}>목록으로</button>
                         </div>
                     </div>
                 </div>

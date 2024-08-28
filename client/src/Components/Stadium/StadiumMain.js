@@ -223,7 +223,7 @@ const StadiumMain = ({ title }) => {
                                     : ''
                                 }
                             </div>
-                            <div>
+                            <div className='my-stadium__list'>
                                 {
                                     userData ?
                                         myStadium.length > 0 ?
@@ -283,21 +283,30 @@ const StadiumMain = ({ title }) => {
                             </div>
                         </div>
 
-                        {/* 버튼 */}
-                        <div className='stadium-btn-wrap'>
-                            <button
-                                type="button"
-                                className="btn btn-outline-secondary btn-sm"
-                                onClick={onClickCurrentSearch}
-                            >
-                                현재 지도에서 검색
-                            </button>
-                            <button
-                                type="button"
-                                className={`btn btn-sm ${btnMyStadium ? 'btn-secondary' : 'btn-outline-secondary'}`}
-                                onClick={onClickMystadium}
-                            >즐겨찾기 보기</button>
+                        <div className='search-stadium'>
+                            <div className='my-stadium__title'>
+                                구장찾기
+                                {userData ?
+                                    "(" + myStadium.length + ")"
+                                    : ''
+                                }
+                            </div>
+                            <div className='stadium-btn-wrap'>
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-secondary btn-sm"
+                                    onClick={onClickCurrentSearch}
+                                >
+                                    현재 지도에서 검색
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`btn btn-sm ${btnMyStadium ? 'btn-secondary' : 'btn-outline-secondary'}`}
+                                    onClick={onClickMystadium}
+                                >즐겨찾기 보기</button>
+                            </div>
                         </div>
+
 
                         {/* 구장 리스트 + 지도 */}
                         <div className='stadium-wrap'>

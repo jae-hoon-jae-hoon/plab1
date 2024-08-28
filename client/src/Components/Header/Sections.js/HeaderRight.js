@@ -11,7 +11,7 @@ import Button from 'react-bootstrap/Button';
 // Axios
 import axios from 'axios';
 
-const HeaderRight = () => {
+const HeaderRight = ({ setIsOpenMobileNav }) => {
     // Redux
     const userData = useSelector((state) => {
         return state.member.userData
@@ -25,8 +25,11 @@ const HeaderRight = () => {
         axios.post('/api/member/authorization', userData)
             .then(result => {
                 if (!result.data.success) {
-                    dispatch(clearUserData())
+                    throw new Error("authorization fail");
                 }
+            })
+            .catch(err => {
+                dispatch(clearUserData())
             })
     }, [userData, dispatch])
 
@@ -42,8 +45,15 @@ const HeaderRight = () => {
                 if (result.data.success) {
                     // 2. 리덕스 초기화
                     dispatch(clearUserData())
+                    alert('로그아웃 되었습니다.')
                 }
             })
+    }
+
+    const onClickNav = () => {
+        if (setIsOpenMobileNav) {
+            setIsOpenMobileNav(false)
+        }
     }
 
     return (
@@ -53,15 +63,17 @@ const HeaderRight = () => {
                     <div className='header-login logined'>
                         <span className='header-login__welcome'><b>{userData.userName}</b> 님, 환영합니다</span>
                         <div className='header-login__btn-wrap'>
-                            <Button variant="outline-secondary" size="sm" type="button" onClick={onClickLogout}>로그아웃</Button>
-                            <Link to="/mypage"><Button variant="outline-secondary" size="sm" type="button">마이페이지</Button></Link>
+                            <Button variant="outline-secondary" size="sm" type="button" onClick={(e) => { onClickLogout(e); onClickNav(); }}>로그아웃</Button>
+                            <Link to="/mypage">
+                                <Button variant="outline-secondary" size="sm" type="button" onClick={onClickNav}>마이페이지</Button>
+                            </Link>
                         </div>
                     </div>
                     :
                     <div className='header-login'>
                         <div className='header-login__btn-wrap'>
-                            <Link to="/login"><Button variant="outline-secondary" size="sm" type="button">로그인</Button></Link>
-                            <Link to="/signup"><Button variant="outline-secondary" size="sm" type="button">회원가입</Button></Link>
+                            <Link to="/login"><Button variant="outline-secondary" size="sm" type="button" onClick={onClickNav}>로그인</Button></Link>
+                            <Link to="/signup"><Button variant="outline-secondary" size="sm" type="button" onClick={onClickNav}>회원가입</Button></Link>
                         </div>
                     </div>
             }

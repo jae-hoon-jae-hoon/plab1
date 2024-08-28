@@ -644,6 +644,9 @@ function UpdateMemberModal({ modalMemberData, showMemberUpdateForm, setShowMembe
   const [etc, setEtc] = useState(modalMemberData?.etc)
   const [level, setLevel] = useState(modalMemberData?.level)
 
+  const nameInputRef = useRef(null)
+
+
   useEffect(() => {
     setName(modalMemberData?.userName)
     setBacknumber(modalMemberData?.backnumber)
@@ -704,7 +707,7 @@ function UpdateMemberModal({ modalMemberData, showMemberUpdateForm, setShowMembe
             <form className='add-form'>
               <div className='add-form__row'>
                 <label htmlFor='name'>이름</label>
-                <input type="text" id="name" className='form-control w-100 p-2' placeholder='이름' value={name} readOnly disabled />
+                <input type="text" ref={nameInputRef} id="name" className='form-control w-100 p-2' placeholder='이름' defaultValue={name ? name : ''} readOnly disabled />
               </div>
               <div className='add-form__row'>
                 <label htmlFor='backnumber'>등번호</label>
@@ -740,9 +743,9 @@ function UpdateMemberModal({ modalMemberData, showMemberUpdateForm, setShowMembe
 
 /* 경기기록수정 모달 */
 function UpdateRecordModal({ teamNo, myTeamName, modalRecordData, showRecordUpdateForm, setShowRecordUpdateForm, setRecordList }) {
-  const [opponentName, setOpponentName] = useState(modalRecordData?.opponentName)
-  const [opponentScore, setOpponentScore] = useState(modalRecordData?.opponentScore)
-  const [myScore, setMyScore] = useState(modalRecordData?.myScore)
+  const [opponentName, setOpponentName] = useState('')
+  const [opponentScore, setOpponentScore] = useState('')
+  const [myScore, setMyScore] = useState('')
 
   useEffect(() => {
     setOpponentName(modalRecordData?.opponentName ? modalRecordData?.opponentName : '')

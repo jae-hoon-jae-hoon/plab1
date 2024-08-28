@@ -11,6 +11,13 @@ const dotenv = require("dotenv").config();
 // Library
 const cookieParser = require('cookie-parser');
 
+
+// Path
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'build')));
+
+
+
 // Middleware
 app.use(express.json()); // 유저가 보낸 array/object 데이터를 출력해보기 위해 필요
 app.use(cookieParser()); // 쿠키를 사용하기 쉽게 함. req로 받을때 객체형태로 변환, 쿠키삭제 편리
@@ -47,6 +54,10 @@ app.use('/api/board', require('./Routes/Board/board'));
 app.use('/api/stadium', require('./Routes/Stadium/stadium'));
 app.use('/api/team', require('./Routes/Team/team'));
 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
-const PORT = 5000;
+
+const PORT = 8080;
 app.listen(PORT, () => { console.log(`Listening on port ${PORT}`) });

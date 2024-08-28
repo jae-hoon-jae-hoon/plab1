@@ -15,17 +15,19 @@ export const kakaoMapLoad = async (myStadiumData, setStadiums) => {
     operateSetStadium = setStadiums
 
     let getCurrentLatLng;
-    // // 현재위치가져오기
-    // try {
-    //     getCurrentLatLng = await getCurrentPosition()
-    // } catch (error) {
-    //     // console.log(error);
-    //     getCurrentLatLng = false
-    // }
+    // 현재위치가져오기
+    try {
+        getCurrentLatLng = await getCurrentPosition()
+    } catch (error) {
+        // console.log(error);
+        getCurrentLatLng = false
+    }
 
     const SUWON = new kakao.maps.LatLng(37.26630029760718, 126.99985343903623)
 
     const CENTER_LAT_LNG = getCurrentLatLng ? getCurrentLatLng : SUWON;
+    console.log(CENTER_LAT_LNG);
+    
 
     //지도를 담을 영역의 DOM 레퍼런스
     let container = document.getElementById('map');
@@ -54,29 +56,32 @@ export const kakaoMapLoad = async (myStadiumData, setStadiums) => {
     kakaomapSearch(CENTER_LAT_LNG)
 }
 
-// // GeoLocation을 이용해서 접속 위치를 얻어옵니다.
-// const getCurrentPosition = async () => {
-//     return new Promise((res, rej) => {
-//         if (navigator.geolocation) {
-//             navigator.geolocation.getCurrentPosition( // ✏️ navigator.geolocation.getCurrentPosition(성공했을떄함수, 에러났을떄함수)
-//                 (position) => {
-//                     const lat = position.coords.latitude; // 위도
-//                     const lon = position.coords.longitude; // 경도
+// GeoLocation을 이용해서 접속 위치를 얻어옵니다.
+const getCurrentPosition = async () => {
+    return new Promise((res, rej) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition( // ✏️ navigator.geolocation.getCurrentPosition(성공했을떄함수, 에러났을떄함수)
+                (position) => {
+                    const lat = position.coords.latitude; // 위도
+                    const lon = position.coords.longitude; // 경도
 
-//                     const latlng = new kakao.maps.LatLng(lat, lon);
-//                     res(latlng);
-//                 },
-//                 (err) => {
-//                     // console.log(err);
-//                     rej(false);
-//                 }
-//             );
-//         } else {
-//             // rej(new Error("현재 위치를 불러올 수 없습니다."));
-//             rej(false);
-//         }
-//     });
-// };
+                    const latlng = new kakao.maps.LatLng(lat, lon);
+                    res(latlng);
+
+                    console.log(latlng);
+                    
+                },
+                (err) => {
+                    // console.log(err);
+                    rej(false);
+                }
+            );
+        } else {
+            // rej(new Error("현재 위치를 불러올 수 없습니다."));
+            rej(false);
+        }
+    });
+};
 
 
 /* Func: 카카오맵 지도검색 */

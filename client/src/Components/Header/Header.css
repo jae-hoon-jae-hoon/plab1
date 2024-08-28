@@ -1,11 +1,16 @@
+:root {
+    --header-z-index: 100;
+}
+
 .header {
     position: fixed;
+    left: 0;
     width: 100%;
     height: 80px;
     color: #222;
-    background-color: #fff;
+    background-color: #fafafa;
     border-bottom: 1px solid lightgray;
-    z-index: 100;
+    z-index: var(--header-z-index);
 }
 
 .header.floating {
@@ -14,7 +19,12 @@
 
 .header .inner {
     display: flex;
+    align-items: center;
     height: 100%;
+}
+
+.header .inner.sb {
+    justify-content: space-between;
 }
 
 /* Header Left */
@@ -53,10 +63,11 @@
     /* width: 100%; */
     height: 100%;
 }
+
 .header-login.logined {
     flex-direction: column;
     justify-content: center;
-    gap:3px 0;
+    gap: 3px 0;
 }
 
 .header-login__btn-wrap {
@@ -82,3 +93,56 @@
     vertical-align: middle;
     overflow: hidden;
 }
+.btn-mobile-menu .btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+}
+
+/* Mobile Nav */
+.mobile-nav {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    height: 0px;
+    overflow: hidden;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: #fafafa;
+    transition: height 0.5s;
+    z-index: var(--header-z-index);
+}
+
+.mobile-nav.show {
+    height: 300px;
+    border-bottom: 2px solid #e5e5e5;
+}
+
+.mobile-nav .inner {
+    display: block;
+}
+
+.mobile-menu .header-navbar {
+    display: block;
+    padding: 0;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.mobile-menu .header-navbar li a {
+    display: block;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.mobile-login .header-right {
+    justify-content: center;
+    width: 100%;
+}
+
+@media screen and (max-width: 767px) {}
