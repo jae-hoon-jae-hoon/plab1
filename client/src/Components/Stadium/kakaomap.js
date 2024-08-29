@@ -26,7 +26,6 @@ export const kakaoMapLoad = async (myStadiumData, setStadiums) => {
     const SUWON = new kakao.maps.LatLng(37.26630029760718, 126.99985343903623)
 
     const CENTER_LAT_LNG = getCurrentLatLng ? getCurrentLatLng : SUWON;
-    console.log(CENTER_LAT_LNG);
     
 
     //지도를 담을 영역의 DOM 레퍼런스
@@ -67,9 +66,6 @@ const getCurrentPosition = async () => {
 
                     const latlng = new kakao.maps.LatLng(lat, lon);
                     res(latlng);
-
-                    console.log(latlng);
-                    
                 },
                 (err) => {
                     // console.log(err);

@@ -20,7 +20,7 @@ async function getTotalListCnt(keyword) {
 
             db.query(sql, (err, results) => {
                 if (err) {
-                    console.log(err);
+                    // console.log(err);
                     reject(false)
                 }
                 resolve(results);
@@ -29,7 +29,7 @@ async function getTotalListCnt(keyword) {
         const totalListCnt = results[0].totalListCnt;
         return totalListCnt;
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         return false
     }
 }
@@ -47,7 +47,7 @@ async function getList(startIndex, perPage, keyword) {
                     `
             db.query(sql, (err, results) => {
                 if (err) {
-                    console.log(err);
+                    // console.log(err);
                     reject(false)
                 }
 
@@ -57,7 +57,7 @@ async function getList(startIndex, perPage, keyword) {
         return listData;
 
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         return false
     }
 }

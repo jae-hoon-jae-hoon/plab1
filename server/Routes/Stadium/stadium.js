@@ -86,7 +86,7 @@ router.post('/setMyStadium', (req, res) => {
             let deleteParams = [userNo, stadiumInfo.id]
             db.query(deleteSql, deleteParams, (err, deleteResults) => {
                 if (err) {
-                    console.log(err);
+                    // console.log(err);
                     result.message = "DB Delete Error"
                     return res.status(500).json(result)
                 }

@@ -110,7 +110,8 @@ router.post('/login', (req, res) => {
     let loginParams = [userId]
     db.query(loginSql, loginParams, async (err, results) => {
         if (err) {
-            console.log(err);
+            // console.log(err);
+            // result.err = err
             result.message = "Login DB Error"
             return res.status(500).json(result)
         }
