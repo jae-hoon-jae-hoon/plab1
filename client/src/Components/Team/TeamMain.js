@@ -116,6 +116,10 @@ const TeamMain = ({ title }) => {
 
     // Method
     const onClickAddTeam = () => {
+        if (!userData) {
+            alert('로그인이 필요한 기능입니다.')
+            return false
+        }
         setShowAddForm(true)
     }
 
@@ -235,7 +239,7 @@ const TeamMain = ({ title }) => {
                                         return (
                                             <div key={"myTeam-" + item.teamNo}>
                                                 <div className='team-list__btn'>
-                                                    <Link to={"/team/myteam/" + 1}>
+                                                    <Link to={"/team/myteam/" + item.teamNo}>
                                                         <button className="btn btn-secondary">My팀 관리</button>
                                                     </Link>
                                                 </div>
@@ -392,6 +396,7 @@ const TeamMain = ({ title }) => {
                         {/* 팀 만들기 모달 */}
                         {showAddForm &&
                             <TeamAdd
+                                userData={userData}
                                 showAddForm={showAddForm}
                                 setShowAddForm={setShowAddForm}
                                 setTeamList={setTeamList}

@@ -32,6 +32,7 @@ const teamJoinStatus = {
     reject: 2,
     waiting: 3
 }
+const teamMasterLevel = 1
 
 
 // Method
@@ -136,6 +137,7 @@ router.post('/getTeamList', async (req, res) => {
 
     // getList
     let list = await getList(startIndex, perPage, keyword)
+
     if (!list) {
         result.message = 'Get List Fail';
         return result;
@@ -195,7 +197,7 @@ router.post('/getMyTeam', (req, res) => {
 router.post('/addTeam', upload.single('img'), async (req, res) => {
     let result = { success: false, message: "" }
 
-    const { name, desc } = req.body
+    const { userNo, name, desc } = req.body
 
     try {
         if (name === '' || desc === '') {
@@ -206,21 +208,31 @@ router.post('/addTeam', upload.single('img'), async (req, res) => {
         let teamImgPath = req.file ? req.file.location : ''
 
         let regDate = formatDate();
+
+        // team테이블 insert
         let insertSql = "INSERT INTO team (teamName, teamDesc, teamImgKey, teamImgPath, regDate) VALUES (?, ?, ?, ?, ?)"
         let insertParams = [name, desc, teamImgKey, teamImgPath, regDate]
         db.query(insertSql, insertParams, (err, results) => {
             if (err) {
-                // console.log(err);
                 throw new Error('ID Insert Error')
             }
 
-            result.insertId = results.insertId
-            result.teamImgPath = teamImgPath
-            result.success = true
-            result.message = "User registered successfully"
-            return res.status(201).json(result)
-        })
+            // team_join테이블 insert
+            let teamNo = results.insertId
+            let teamJoinInsertSql = "INSERT INTO team_join (teamNo, userNo, level, status, regDate) VALUES (?, ?, ?, ?, ?)"
+            let teamJoinInsertParams = [teamNo, userNo, 1, 1, regDate]
+            db.query(teamJoinInsertSql, teamJoinInsertParams, (teamJoinErr, results) => {
+                if (teamJoinErr) {
+                    throw new Error('team_join Insert Error')
+                }
 
+                result.insertId = teamNo
+                result.teamImgPath = teamImgPath
+                result.success = true
+                result.message = "User registered successfully"
+                return res.status(201).json(result)
+            })
+        })
     } catch (error) {
         // console.log(error);
 
@@ -883,6 +895,84 @@ router.post('/deleteRecord', (req, res) => {
             return res.status(400).json(result)
         }
     })
+})
+
+/* 팀삭제 */
+router.post('/deleteMyTeam', (req, res) => {
+    let result = { success: false, message: "" }
+
+    const { teamNo, userNo, teamImgKey } = req.body
+
+    // Validation
+    if (!teamNo || !userNo) {
+        result.message = "Data Error"
+        return res.status(400).json(result)
+    }
+
+    // 1. userNo 권한 검사
+    let checkUserSql = 'SELECT * FROM team_join WHERE teamNo = ? AND userNo = ? AND level = ?';
+    let checkUserParams = [teamNo, userNo, teamMasterLevel]
+
+    db.query(checkUserSql, checkUserParams, async (err, results) => {
+        if (err) {
+            result.message = "Check User Error"
+            return res.status(500).json(result)
+        }
+
+        if (results.length === 1) {
+
+            // 2. 권한검사 통과하면 삭제 진행
+            // 2-1. team_record 삭제
+            // 2-2. team_join 삭제
+            // 2-3. team 삭제
+            // 2-4. team테이블의 이미지 삭제
+
+            try {
+
+                // 트랜잭션 시작
+                db.beginTransaction();
+
+                // team_join 테이블에서 데이터 삭제
+                db.execute('DELETE FROM team_join WHERE teamNo = ?', [teamNo]);
+
+                // team_record 테이블에서 데이터 삭제
+                db.execute('DELETE FROM team_record WHERE teamNo = ?', [teamNo]);
+
+                // team 테이블에서 데이터 삭제
+                db.execute('DELETE FROM team WHERE teamNo = ?', [teamNo]);
+
+                // 이미지 삭제
+                if (teamImgKey) {
+                    const params = {
+                        Bucket: process.env.AWS_BUCKET_NAME,
+                        Key: teamImgKey,
+                    };
+
+                    const command = new DeleteObjectCommand(params);
+                    try {
+                        const data = await s3.send(command);
+                    } catch (err) {
+                        throw new Error("Error deleting the image from S3");
+                    }
+                }
+
+                db.commit();
+                result.success = true;
+                return res.status(200).json(result)
+
+            } catch (error) {
+                db.rollback();
+
+                result.message = "Delete Error"
+                return res.status(500).json(result)
+            }
+
+        } else {
+            result.message = "Check User Fail"
+            return res.status(400).json(result)
+        }
+    })
+
 })
 
 module.exports = router;

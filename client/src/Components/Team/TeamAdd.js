@@ -9,7 +9,7 @@ import './Team.css'
 // Library
 import axios from 'axios'
 
-const TeamAdd = ({ showAddForm, setShowAddForm, setTeamList }) => {
+const TeamAdd = ({ userData, showAddForm, setShowAddForm, setTeamList }) => {
     // State
     const [imgFile, setImgFile] = useState(null)
     const [imgPreview, setImgPreview] = useState(no_img)
@@ -52,6 +52,12 @@ const TeamAdd = ({ showAddForm, setShowAddForm, setTeamList }) => {
 
     const onClickSave = async (e) => {
         e.preventDefault();
+
+        if (!userData) {
+            alert('로그인이 필요한 기능입니다.')
+            return false;
+        }
+
         let name = nameRef.current.value
         let desc = descRef.current.value
 
@@ -68,6 +74,7 @@ const TeamAdd = ({ showAddForm, setShowAddForm, setTeamList }) => {
         }
 
         const formData = new FormData();
+        formData.append('userNo', userData.userNo);
         formData.append('img', imgFile);
         formData.append('name', name);
         formData.append('desc', desc);

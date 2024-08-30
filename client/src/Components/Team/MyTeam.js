@@ -423,6 +423,36 @@ const MyTeam = ({ title }) => {
       })
   }
 
+  const onClickDeleteTeam = (teamNo, userNo) => () => {
+
+    let chk = window.confirm('팀을 삭제하시겠습니까?')
+    if (!chk) return false
+
+    // Validation
+    if (!teamNo || !userNo) {
+      alert('삭제에 실패했습니다.')
+      return false
+    }
+
+    let data = {
+      teamNo, userNo,
+      teamImgKey: originImgKey
+    }
+    axios.post('/api/team/deleteMyTeam', data)
+      .then(result => {
+        if (result.data.success) {
+          alert('삭제되었습니다.')
+          navigate('/team');
+        } else {
+          throw new Error("삭제 도중 에러가 발생했습니다.");
+        }
+      })
+      .catch(err => {
+        alert('삭제 도중 에러가 발생했습니다.')
+        return false;
+      })
+  }
+
   // Render
   return (
     <>
@@ -630,6 +660,15 @@ const MyTeam = ({ title }) => {
                 setRecordList={setRecordList}
               />
             </div>
+
+            {/* 팀 삭제 */}
+            <div className='team-detail record-list'>
+              <h4>팀 삭제</h4>
+              <p>팀을 삭제하시려면 아래 버튼을 눌러주세요.</p>
+              <br />
+              <button className='btn btn- btn-danger' onClick={onClickDeleteTeam(teamNo, userData.userNo)}>팀 삭제</button>
+            </div>
+
           </div>
         </div>
       </div >
