@@ -4,10 +4,10 @@ const db = require('./db');
 // Library
 const dayjs = require('dayjs');
 const jwt = require('jsonwebtoken');
+const dotenv = require("dotenv").config();
 
-const ACCESS_SERCRET_KEY = 'your-secret-key';
-const REFRESH_SECRET_KEY = 'your-secret-key2';
-
+const ACCESS_SERCRET_KEY = process.env.JWT_ACCESS_KEY;
+const REFRESH_SECRET_KEY = process.env.JWT_REFRESH_KEY;
 
 
 const generateAccessToken = ({ userNo }) => {

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // Redux
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { clearUserData } from '../../../features/member/memberSlice';
 
 // Bootstrap
@@ -11,11 +11,8 @@ import Button from 'react-bootstrap/Button';
 // Axios
 import axios from 'axios';
 
-const HeaderRight = ({ setIsOpenMobileNav }) => {
-    // Redux
-    const userData = useSelector((state) => {
-        return state.member.userData
-    });
+const HeaderRight = ({ setIsOpenMobileNav, isMobile, userData }) => {
+
 
     // dispatch
     const dispatch = useDispatch();
@@ -61,7 +58,9 @@ const HeaderRight = ({ setIsOpenMobileNav }) => {
             {
                 userData ?
                     <div className='header-login logined'>
-                        <span className='header-login__welcome'><b>{userData.userName}</b> 님, 환영합니다</span>
+                        {!isMobile &&
+                            <span className='header-login__welcome'><b>{userData.userName}</b> 님, 환영합니다</span>
+                        }
                         <div className='header-login__btn-wrap'>
                             <Button variant="outline-secondary" size="sm" type="button" onClick={(e) => { onClickLogout(e); onClickNav(); }}>로그아웃</Button>
                             <Link to="/mypage">

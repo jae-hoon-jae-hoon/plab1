@@ -525,8 +525,13 @@ const MyTeam = ({ title }) => {
                               <td>{item.etc}</td>
                               <td>
                                 <button className='btn btn-outline-secondary btn-sm' onClick={onClickShowMemberModal(item)}>수정</button>
-                                &nbsp;
-                                <button className='btn btn-outline-danger btn-sm' onClick={onClickReleaseMemberList(item)}>방출</button>
+
+                                {item.level != 1 &&
+                                  <>
+                                    &nbsp;
+                                    <button className='btn btn-outline-danger btn-sm' onClick={onClickReleaseMemberList(item)}>방출</button>
+                                  </>
+                                }
                               </td>
                             </tr>
                           )

@@ -344,7 +344,7 @@ const TeamMain = ({ title }) => {
                                             <h6 className="content-wrap__title">선수정보</h6>
                                             {detail.player && detail.player.length > 0
                                                 ?
-                                                <table className='table-sm table-bordered text-center'>
+                                                <table className='table-sm table-bordered text-center' style={{border: "1px solid #e5e5e5", fontSize:"15px"}}>
                                                     <colgroup>
                                                         <col width="80px" />
                                                         <col width="200px" />
@@ -374,7 +374,7 @@ const TeamMain = ({ title }) => {
                                         <div className='content-wrap record'>
                                             <h6 className="content-wrap__title">최근 전적</h6>
                                             {detail.record && detail.record.length > 0
-                                                ? <ul className='record-list'>
+                                                ? <ul className='record-list' style={{fontSize:"15px"}}>
                                                     {detail.record.map(item => {
                                                         return (
                                                             <li key={"detail-record-" + item.teamRecordNo}>{detail.teamName} {item.myScore} : {item.opponentScore} {item.opponentName}</li>

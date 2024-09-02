@@ -90,10 +90,18 @@
     max-width: 68px;
     text-overflow: ellipsis;
     text-wrap: nowrap;
-    vertical-align: middle;
+    vertical-align: bottom;
     overflow: hidden;
 }
-.btn-mobile-menu .btn{
+
+.btn-mobile-menu {
+    display: flex;
+    gap: 0 16px;
+    align-items: center;
+}
+
+
+.btn-mobile-menu .btn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -117,7 +125,7 @@
 }
 
 .mobile-nav.show {
-    height: 300px;
+    height: 250px;
     border-bottom: 2px solid #e5e5e5;
 }
 
@@ -145,4 +153,22 @@
     width: 100%;
 }
 
-@media screen and (max-width: 767px) {}
+@media screen and (max-width: 767px) {
+    .btn-mobile-menu .header-login__welcome {
+        font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .header-left {
+        width: 70px;
+    }
+
+    .btn-mobile-menu {
+        gap: 0 14px;
+    }
+
+    .btn-mobile-menu .header-login__welcome {
+        font-size: 14px;
+    }
+}
