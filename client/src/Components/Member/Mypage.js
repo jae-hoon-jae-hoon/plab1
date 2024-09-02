@@ -6,7 +6,7 @@ import SubVisual from '../SubVisual/SubVisual'
 import { useDispatch, useSelector } from 'react-redux';
 
 // Redux
-import { setUserData } from '../../features/member/memberSlice';
+import { clearUserData, setUserData } from '../../features/member/memberSlice';
 
 
 
@@ -72,6 +72,8 @@ const Mypage = ({ title }) => {
     const pwInputRef = useRef(null)
     const newPwInputRef = useRef(null)
     const newPwChkInputRef = useRef(null)
+
+    const deletePwInputRef = useRef(null)
 
     // Method
     const onClickSubmit = (e) => {
@@ -157,6 +159,44 @@ const Mypage = ({ title }) => {
             })
     }
 
+    const onClickDeleteAccount = (e) => {
+        e.preventDefault();
+
+        let pw = deletePwInputRef.current.value
+
+        if (pw.trim() === '') {
+            alert("현재 비밀번호를 입력해주세요.")
+            deletePwInputRef.current.focus()
+            return false;
+        }
+
+        let data = {
+            userNo: userData.userNo,
+            pw
+        }
+
+        axios.post('/api/member/deleteAccount', data)
+            .then(result => {
+                if (result.data.success) {
+                    dispatch(clearUserData())
+                    alert('회원탈퇴 되었습니다.')
+                    navigate('/')
+                    return true
+                } else {
+                    throw new Error("회원탈퇴 처리중 에러가 발생했습니다.");
+                }
+            })
+            .catch(err => {
+                if (err.response.data.message === 'pw') {
+                    alert("현재 비밀번호가 일치하지 않습니다.")
+                    return false
+                }
+                else {
+                    alert("회원탈퇴 처리중 에러가 발생했습니다.")
+                    return false
+                }
+            })
+    }
 
     // Render
     return (
@@ -166,6 +206,7 @@ const Mypage = ({ title }) => {
             <div className='container login'>
                 <div className='inner'>
                     <div className='container__content'>
+                        {/* 회원정보수정 */}
                         <div style={{ marginBottom: "80px" }}>
                             <h2 className='container__title'>회원정보수정</h2>
                             <Form className='login-form'>
@@ -177,12 +218,14 @@ const Mypage = ({ title }) => {
                                     <Form.Label>이름</Form.Label>
                                     <Form.Control type="text" autoComplete="off" placeholder="이름" ref={nameInputRef} defaultValue={mypageInfo?.userName ? mypageInfo?.userName : ''} />
                                 </Form.Group>
-                                <div className="d-grid pt-5">
+                                <div className="d-grid pt-3">
                                     <Button className="p-3" variant="primary" type="button" onClick={onClickSubmit}>정보수정</Button>
                                 </div>
                             </Form>
                         </div>
-                        <div>
+
+                        {/* 비밀번호변경 */}
+                        <div style={{ marginBottom: "80px" }}>
                             <h2 className='container__title'>비밀번호변경</h2>
                             <Form className='login-form'>
                                 <Form.Group className="mb-3" controlId="userPassword">
@@ -197,8 +240,22 @@ const Mypage = ({ title }) => {
                                     <Form.Label>새로운 비밀번호 확인</Form.Label>
                                     <Form.Control type="password" autoComplete="off" placeholder="새로운 비밀번호 확인" ref={newPwChkInputRef} />
                                 </Form.Group>
-                                <div className="d-grid pt-5">
+                                <div className="d-grid pt-3">
                                     <Button className="p-3" variant="primary" type="button" onClick={onClickChangePw}>비밀번호변경</Button>
+                                </div>
+                            </Form>
+                        </div>
+
+                        {/* 회원탈퇴 */}
+                        <div>
+                            <h2 className='container__title'>회원탈퇴</h2>
+                            <Form className='login-form'>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>현재 비밀번호</Form.Label>
+                                    <Form.Control type="password" autoComplete="off" placeholder="현재 비밀번호" ref={deletePwInputRef} />
+                                </Form.Group>
+                                <div className="d-grid pt-3">
+                                    <Button className="p-3 btn-danger" type="button" onClick={onClickDeleteAccount}>회원탈퇴</Button>
                                 </div>
                             </Form>
                         </div>

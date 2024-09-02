@@ -210,7 +210,7 @@ router.post('/authorization', (req, res) => {
 
         // 1. accessToken 유효
         if (verifyResult.userNo === userNo) {
-        // if (verifyResult.userNo === userNo && verifyResult.userName === userName) {
+            // if (verifyResult.userNo === userNo && verifyResult.userName === userName) {
             return res.json({ success: true });
         }
         // 로그인정보 != 토큰정보
@@ -416,6 +416,59 @@ router.put('/changePw', (req, res) => {
             }
         })
     })
+})
+/* 마이페이지 - 회원탈퇴 */
+router.post('/deleteAccount', (req, res) => {
+    const { userNo, pw } = req.body
+
+    let result = { success: false, message: '' }
+
+    // Validation
+    if (!userNo || !pw) {
+        result.message = "User Data Error"
+        return res.status(400).json(result)
+    }
+
+    // 비밀번호 검사
+    let loginSql = "SELECT * FROM member WHERE userNo = ?";
+    let loginParams = [userNo]
+    db.query(loginSql, loginParams, async (err, results) => {
+        if (err) {
+            result.message = "Pw Check Error"
+            return res.status(500).json(result)
+        }
+        if (results.length == 0) {
+            result.message = "Not Found User"
+            return res.status(400).json(result)
+        }
+
+        let userData = results[0];
+        const isMatch = await bcrypt.compare(pw, userData.userPw);
+        if (!isMatch) {
+            result.message = "pw";
+            return res.status(400).json(result);
+        }
+
+        // 회원삭제
+        let sql = "DELETE FROM member WHERE userNo = ?"
+        let param = [userNo]
+        db.query(sql, param, (err, results) => {
+            if (err) {
+                result.message = "Delete Error"
+                return res.status(500).json(result)
+            }
+
+            if (results.affectedRows === 1) {
+                result.success = true
+                result.message = "Delete Success"
+                return res.status(200).json(result)
+            } else {
+                result.message = "Delete Error"
+                return res.status(500).json(result)
+            }
+        })
+    })
+
 })
 
 module.exports = router;
