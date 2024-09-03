@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 // Imgs
 import myteam_img from './../../imgs/myteam_img.png'
-import no_img from './../../imgs/no_img.png'
+import no_img from './../../imgs/no_img.jpg'
 
 // Css
 import './Team.css'
@@ -35,7 +35,7 @@ const TeamMain = ({ title }) => {
     });
 
     // State
-    const [myTeam, setMyTeam] = useState(null)
+    const [myTeam, setMyTeam] = useState([])
 
     const [currentPage, setCurrentPage] = useState(1);
     const [keyword, setKeyword] = useState('')
@@ -72,18 +72,17 @@ const TeamMain = ({ title }) => {
                         setMyTeam(result.data.data)
                     } else {
                         alert("MyTeam 불러오는 도중 에러가 발생했습니다.");
-                        setMyTeam(null)
+                        setMyTeam([])
                     }
                 })
                 .catch(err => {
                     // console.log(err);
                     // console.log("MyTeam 불러오는 도중 에러가 발생했습니다.");
                     alert("MyTeam 불러오는 도중 에러가 발생했습니다.");
-                    setMyTeam(null)
+                    setMyTeam([])
                 })
-
         } else {
-            setMyTeam(null)
+            setMyTeam([])
         }
 
 
@@ -91,8 +90,8 @@ const TeamMain = ({ title }) => {
 
     // useEffect - teamList
     useEffect(() => {
-        setCurrentPage(queryParams.get('page') ?? 1)
-        setKeyword(queryParams.get('keyword') ?? '')
+        setCurrentPage(queryParams.get('page') ? Number(queryParams.get('page')) : 1)
+        setKeyword(queryParams.get('keyword') ? queryParams.get('keyword') : '')
 
         let data = {
             currentPage,
@@ -232,36 +231,35 @@ const TeamMain = ({ title }) => {
                         {/* My Team */}
                         <div className='myteam'>
                             My Team
-                            {userData ?
-                                myTeam ?
-                                    myTeam.map((item, idx) => {
-                                        let thumbnail = item.teamImgPath ? item.teamImgPath : no_img
-                                        return (
-                                            <div key={"myTeam-" + item.teamNo}>
-                                                <div className='team-list__btn'>
-                                                    <Link to={"/team/myteam/" + item.teamNo}>
-                                                        <button className="btn btn-secondary">My팀 관리</button>
-                                                    </Link>
-                                                </div>
+                            {myTeam.length > 0 ?
+                                myTeam.map((item, idx) => {
+                                    let thumbnail = item.teamImgPath ? item.teamImgPath : no_img
+                                    return (
+                                        <div key={"myTeam-" + item.teamNo}>
+                                            <div className='team-list__btn'>
+                                                <Link to={"/team/myteam/" + item.teamNo}>
+                                                    <button className="btn btn-secondary">MyTeam 관리</button>
+                                                </Link>
+                                            </div>
 
-                                                <div key={"myTeam-" + item.teamNo} className="card mb-3">
-                                                    <div className="row g-0 thumbnail">
-                                                        <div className=" col-md-3 p-2">
-                                                            <img src={thumbnail} className="img-fluid rounded-start" alt="My team 이미지" />
-                                                        </div>
-                                                        <div className="col-md-9">
-                                                            <div className="card-body">
-                                                                <h5 className="card-title">{item.teamName}</h5>
-                                                                <p className="card-text">{item.teamDesc}</p>
-                                                            </div>
+                                            <div key={"myTeam-" + item.teamNo} className="card mb-3">
+                                                <div className="row g-0 thumbnail">
+                                                    <div className=" col-md-3 p-2">
+                                                        <img src={thumbnail} className="img-fluid rounded-start" alt="My team 이미지" />
+                                                    </div>
+                                                    <div className="col-md-9">
+                                                        <div className="card-body">
+                                                            <h5 className="card-title">{item.teamName}</h5>
+                                                            <p className="textarea card-text">{item.teamDesc}</p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        )
-                                    })
-                                    : <p style={{ fontSize: "13px" }}>가입된 My팀이 없습니다.</p>
-                                : <p style={{ fontSize: "13px" }}>로그인 후 이용가능한 기능입니다.</p>
+                                        </div>
+                                    )
+                                })
+                                :
+                                <p className='pt-3 pb-3 text-center'>가입된 팀이 없습니다.</p>
                             }
                         </div>
 
@@ -295,8 +293,11 @@ const TeamMain = ({ title }) => {
                                                     <img src={teamImg} alt={item.teamName + "팀 이미지"} className="card-img-top" />
                                                     <div className="card-body">
                                                         <h5 className="card-title">{item.teamName}</h5>
-                                                        <p className="card-text">{item.teamDesc}</p>
-                                                        <button className="card-btn btn btn-outline-secondary" onClick={onClickShowDetail(item.teamNo)}>팀정보 보기</button>
+
+                                                        <p className="card-text textarea">{item.teamDesc}</p>
+                                                        <div className='text-center'>
+                                                            <button className="card-btn btn btn-outline-secondary" onClick={onClickShowDetail(item.teamNo)}>팀정보</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </li>
@@ -336,7 +337,7 @@ const TeamMain = ({ title }) => {
                                         <div className='content-wrap name'>
                                             <h5>{detail.teamName}</h5>
                                         </div>
-                                        <div className='content-wrap desc'>
+                                        <div className='content-wrap desc textarea'>
                                             <p>{detail.teamDesc}</p>
                                         </div>
 
@@ -344,7 +345,7 @@ const TeamMain = ({ title }) => {
                                             <h6 className="content-wrap__title">선수정보</h6>
                                             {detail.player && detail.player.length > 0
                                                 ?
-                                                <table className='table-sm table-bordered text-center' style={{border: "1px solid #e5e5e5", fontSize:"15px"}}>
+                                                <table className='table-sm table-bordered text-center' style={{ border: "1px solid #e5e5e5", fontSize: "15px" }}>
                                                     <colgroup>
                                                         <col width="80px" />
                                                         <col width="200px" />
@@ -374,7 +375,7 @@ const TeamMain = ({ title }) => {
                                         <div className='content-wrap record'>
                                             <h6 className="content-wrap__title">최근 전적</h6>
                                             {detail.record && detail.record.length > 0
-                                                ? <ul className='record-list' style={{fontSize:"15px"}}>
+                                                ? <ul className='record-list' style={{ fontSize: "15px" }}>
                                                     {detail.record.map(item => {
                                                         return (
                                                             <li key={"detail-record-" + item.teamRecordNo}>{detail.teamName} {item.myScore} : {item.opponentScore} {item.opponentName}</li>

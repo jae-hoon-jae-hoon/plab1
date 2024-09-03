@@ -30,20 +30,18 @@ const BoardWrite = ({ title }) => {
     useEffect(() => {
         // Authorization
         if (!userData) {
-            alert('로그인이 필요한 기능입니다.1')
+            alert('로그인이 필요한 기능입니다.')
             navigate('/login?url=/board/write', { replace: true });
         }
         else {
             axios.post('/api/member/authorization', userData)
                 .then((result) => {
                     if (!result.data.success) {
-                        // 권한 실패경우 - 로그인페이지 이동 + returnURL은 /board/write로 
-                        alert('로그인이 필요한 기능입니다.2')
+                        alert('로그인이 필요한 기능입니다.')
                         navigate('/login?url=/board/write', { replace: true });
                     }
                 })
         }
-
     }, [userData, navigate])
 
     // Method
@@ -107,7 +105,7 @@ const BoardWrite = ({ title }) => {
                             </div>
 
                             <div style={{ textAlign: "right" }}>
-                                <button className='btn btn-secondary' onClick={onClickSubmit}>글작성</button>
+                                <button className='btn btn-secondary' onClick={onClickSubmit}>저장</button>
                             </div>
                         </form>
 

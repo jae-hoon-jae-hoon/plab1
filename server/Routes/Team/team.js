@@ -172,6 +172,7 @@ router.post('/getMyTeam', (req, res) => {
     let sql = `SELECT TJ.teamJoinNo, T.* FROM team_join AS TJ
                     JOIN team AS T
                     ON TJ.userNo = ? AND TJ.teamNo = T.teamNo
+                    WHERE status = 1
                     `
     let params = [userNo]
     db.query(sql, params, (err, results) => {
@@ -210,8 +211,8 @@ router.post('/addTeam', upload.single('img'), async (req, res) => {
         let regDate = formatDate();
 
         // team테이블 insert
-        let insertSql = "INSERT INTO team (teamName, teamDesc, teamImgKey, teamImgPath, regDate) VALUES (?, ?, ?, ?, ?)"
-        let insertParams = [name, desc, teamImgKey, teamImgPath, regDate]
+        let insertSql = "INSERT INTO team (userNo, teamName, teamDesc, teamImgKey, teamImgPath, regDate) VALUES (?, ?, ?, ?, ?, ?)"
+        let insertParams = [userNo, name, desc, teamImgKey, teamImgPath, regDate]
         db.query(insertSql, insertParams, (err, results) => {
             if (err) {
                 throw new Error('ID Insert Error')

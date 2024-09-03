@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import SubVisual from '../SubVisual/SubVisual'
 
 // Imgs
-import no_img from './../../imgs/no_img.png'
+import no_img from './../../imgs/no_img.jpg'
 
 // Css
 import './Team.css'
@@ -453,6 +453,15 @@ const MyTeam = ({ title }) => {
       })
   }
 
+  const getLevelText = (level) => {
+    const levelText = {
+      1: "마스터",
+      2: "관리자",
+      3: "일반회원"
+    }
+    return levelText[level]
+  }
+
   // Render
   return (
     <>
@@ -460,9 +469,9 @@ const MyTeam = ({ title }) => {
       <div className='stadium'>
         <div className='inner'>
           <div className='container__content'>
-            <div>
+            {/* <div>
               0. 팀관리 페이지 접속시, level값 검사 <br />
-            </div>
+            </div> */}
 
             {/* 기본 정보 */}
             <div className='team-detail team-info'>
@@ -501,13 +510,15 @@ const MyTeam = ({ title }) => {
                 <table className="table text-center">
                   <colgroup>
                     <col width="25%" />
-                    <col width="25%" />
+                    <col width="15%" />
+                    <col width="10%" />
                     <col width="25%" />
                     <col width="25%" />
                   </colgroup>
                   <thead>
                     <tr>
                       <td>이름</td>
+                      <td>등급</td>
                       <td>등번호</td>
                       <td>추가정보</td>
                       <td>관리</td>
@@ -518,9 +529,11 @@ const MyTeam = ({ title }) => {
                       memberList.length === 0
                         ? <tr><td colSpan={4}>가입된 팀원이 없습니다.</td></tr>
                         : memberList.map(item => {
+                          let levelText = getLevelText(item.level)
                           return (
                             <tr key={"memberlist-" + item.teamJoinNo}>
                               <td>{item.userName}</td>
+                              <td>{levelText}</td>
                               <td>{item.backnumber === '' ? '-' : item.backnumber}</td>
                               <td>{item.etc}</td>
                               <td>
@@ -683,19 +696,19 @@ const MyTeam = ({ title }) => {
 
 /* 팀원정보수정 모달 */
 function UpdateMemberModal({ modalMemberData, showMemberUpdateForm, setShowMemberUpdateForm, setMemberList }) {
-  const [name, setName] = useState(modalMemberData?.userName)
-  const [backnumber, setBacknumber] = useState(modalMemberData?.backnumber)
-  const [etc, setEtc] = useState(modalMemberData?.etc)
-  const [level, setLevel] = useState(modalMemberData?.level)
+  const [name, setName] = useState('')
+  const [backnumber, setBacknumber] = useState('')
+  const [etc, setEtc] = useState('')
+  const [level, setLevel] = useState('')
 
   const nameInputRef = useRef(null)
 
 
   useEffect(() => {
-    setName(modalMemberData?.userName)
-    setBacknumber(modalMemberData?.backnumber)
-    setEtc(modalMemberData?.etc)
-    setLevel(modalMemberData?.level)
+    setName(modalMemberData?.userName ? modalMemberData.userName : '')
+    setBacknumber(modalMemberData?.backnumber ? modalMemberData.backnumber : '')
+    setEtc(modalMemberData?.etc ? modalMemberData.etc : '')
+    setLevel(modalMemberData?.level ? modalMemberData.level : '')
   }, [modalMemberData])
 
   const onClickClose = () => {

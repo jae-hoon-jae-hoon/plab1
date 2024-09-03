@@ -35,7 +35,6 @@ function App() {
   return (
     <BrowserRouter>
       <Header />
-
       <Routes>
         <Route path="/" element={<Main />} />
 
@@ -59,9 +58,7 @@ function App() {
 
         {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
-
       <Footer />
-
     </BrowserRouter>
   );
 }

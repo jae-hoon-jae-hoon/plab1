@@ -26,7 +26,7 @@ export const kakaoMapLoad = async (myStadiumData, setStadiums) => {
     const SUWON = new kakao.maps.LatLng(37.26630029760718, 126.99985343903623)
 
     const CENTER_LAT_LNG = getCurrentLatLng ? getCurrentLatLng : SUWON;
-    
+
 
     //지도를 담을 영역의 DOM 레퍼런스
     let container = document.getElementById('map');
@@ -85,7 +85,7 @@ function kakaomapSearch(kakaoLatLng) {
     let ps = new kakao.maps.services.Places(map);
     let psOptions = {
         location: kakaoLatLng, // 해당좌표 기준으로 검색
-        radius: 3000, // 위 좌표로부터 거리 필터링 값
+        radius: 5000, // 중심좌표로 부터 반경 몇 m 내
         sort: kakao.maps.services.SortBy.DISTANCE, // DISTANCE or ACCURACY(default)
     }
     ps.keywordSearch('축구', placesSearchCB, psOptions);
@@ -214,6 +214,7 @@ function setMarker(data, index, isMyStadium) {
     copyBtn.onclick = function () {
         let addressText = address.textContent // ✏️ textContent VS innerHTML
         navigator.clipboard.writeText(addressText)
+        alert('주소가 복사되었습니다.')
     }
 
     close.onclick = function () {

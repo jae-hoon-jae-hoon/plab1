@@ -35,6 +35,15 @@ const SignUp = ({ title }) => {
     const onClickIdChk = (e) => {
         e.preventDefault();
 
+        // Validation
+        if (idInputRef.current.value.trim() === '') {
+            setIdChk(false)
+            idInputRef.current.classList.remove('success')
+            idInputRef.current.classList.add('fail')
+            setIdChkText('아이디를 입력해주세요.')
+            return false;
+        }
+
         let data = {
             userId: idInputRef.current.value
         }
@@ -42,16 +51,22 @@ const SignUp = ({ title }) => {
             .then(result => {
                 if (result.data.success) {
                     setIdChk(true)
+                    idInputRef.current.classList.remove('fail')
+                    idInputRef.current.classList.add('success')
                     setIdChkText('사용가능한 아이디입니다.')
                 } else {
                     setIdChk(false)
+                    idInputRef.current.classList.remove('success')
+                    idInputRef.current.classList.add('fail')
                     setIdChkText('이미 사용중인 아이디입니다.')
                 }
             })
-
-        idInputRef.current.classList.remove('fail')
-        idInputRef.current.classList.add('success')
-        setIdChk(true)
+            .catch(err => {
+                setIdChk(false)
+                idInputRef.current.classList.remove('success')
+                idInputRef.current.classList.add('fail')
+                alert('중복확인 중에 에러가 발생했습니다.')
+            })
     }
 
     const onClickSubmit = (e) => {
@@ -119,7 +134,7 @@ const SignUp = ({ title }) => {
             <div className='container login'>
                 <div className='inner'>
                     <div className='container__content'>
-                        <h2 className='container__title'>{title}</h2>
+                        {/* {<h2 className='container__title'>{title}</h2>} */}
 
                         <Form className='login-form'>
                             <Form.Group className="mb-3" controlId="userEmail">

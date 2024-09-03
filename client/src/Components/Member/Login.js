@@ -91,7 +91,7 @@ const Login = ({ title }) => {
             let userData = response.data.userData;
             dispatch(setUserData(userData))
 
-            url ? navigate(url, { replace: true }) : navigate('/', { replace: true })
+            url ? navigate(url) : navigate('/', { replace: true })
 
         } catch (error) {
             alert('회원정보가 일치하지 않습니다.')
@@ -107,7 +107,7 @@ const Login = ({ title }) => {
             <div className='container login'>
                 <div className='inner'>
                     <div className='container__content'>
-                        <h2 className='container__title'>{title}</h2>
+                        {/* {<h2 className='container__title'>{title}</h2>} */}
 
                         <Form className='login-form'>
                             <Form.Group className="mb-2" controlId="formBasicEmail">

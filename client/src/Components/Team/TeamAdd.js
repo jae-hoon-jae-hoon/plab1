@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 // Imgs
-import no_img from './../../imgs/no_img.png'
+import no_img from './../../imgs/no_img.jpg'
 
 // Css
 import './Team.css'

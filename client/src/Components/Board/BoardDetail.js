@@ -96,11 +96,6 @@ const BoardDetail = ({ title }) => {
                                     <h2>{data.title}</h2>
                                 </div>
                             </div>
-                            <div className='detail-info'>
-                                <span>작성자: {data.userName}</span>
-                                <span>작성일: {data.formatDate}</span>
-                            </div>
-
                             {/* Write Button */}
                             {
                                 (userData && userData.userNo === data.userNo) &&
@@ -112,8 +107,11 @@ const BoardDetail = ({ title }) => {
                                     </div>
                                 </>
                             }
-
-                            <div className="detail-content" style={{  }}>
+                            <div className='detail-info'>
+                                <span>작성자: {data.userName}</span>
+                                <span>작성일: {data.formatDate}</span>
+                            </div>
+                            <div className="detail-content" style={{ whiteSpace: "pre-line" }}>
                                 <div className="col">
                                     {data.content}
                                 </div>

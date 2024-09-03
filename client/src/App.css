@@ -80,6 +80,9 @@ table td {
     border-color: #ccc;
 }
 
+.textarea{
+    white-space: pre-wrap;
+}
 
 @media screen and (max-width: 767px) {
     .btn {

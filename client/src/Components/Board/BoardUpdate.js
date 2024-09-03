@@ -28,7 +28,7 @@ const BoardUpdate = ({ title }) => {
 
     // Redux
     const userData = useSelector(state => state.member.userData)
-
+    
     // useEffect
     useEffect(() => {
 
@@ -37,6 +37,7 @@ const BoardUpdate = ({ title }) => {
             alert('로그인이 필요한 기능입니다.')
             navigate('/login?url=/board/update/' + id);
         }
+
         axios.post('/api/member/authorization', userData)
             .then((result) => {
                 if (!result.data.success) {
@@ -52,8 +53,14 @@ const BoardUpdate = ({ title }) => {
                 result => {
                     if (result.data.success) {
                         let boardData = result.data.data;
-                        setTitle(boardData.title)
-                        setContent(boardData.content)
+                        if (boardData.userNo != userData.userNo) {
+                            alert("사용자 정보가 일치하지 않습니다.")
+                            navigate('/board')
+                        }
+                        else{
+                            setTitle(boardData.title)
+                            setContent(boardData.content)
+                        }
                     }
                     else {
                         alert("게시글을 불러오지 못했습니다.")

@@ -29,9 +29,8 @@ const StadiumMain = ({ title }) => {
     // State
     const [stadiums, setStadiums] = useState([]); // 전체 구장 리스트
     const [myStadium, setMyStadium] = useState([]); // 즐겨찾기 리스트
-    const [btnMyStadium, setBtnMyStadium] = useState(false);
-
-    const [isShowList, setIsShowList] = useState(window.innerWidth > 1024 ? true : false);
+    const [btnMyStadiumActive, setbtnMyStadiumActive] = useState(false); // 즐겨찾기 보기 버튼 활성화 상태
+    const [isShowList, setIsShowList] = useState(window.innerWidth > 1024 ? true : false); // 구장 찾기 리스트 활성화 상태
 
     // useEffect
     useEffect(() => {
@@ -48,7 +47,6 @@ const StadiumMain = ({ title }) => {
             let result = await axios.post('/api/stadium/getMyStadium', data)
 
             if (result.data.success) {
-
                 if (result.data.myStadium) {
                     setMyStadium(result.data.myStadium)
                     kakaoMapLoad(result.data.myStadium, setStadiums)
@@ -71,7 +69,7 @@ const StadiumMain = ({ title }) => {
     const onClickCardTitle = (index) => (e) => {
         // State
         setStadiums(myStadium)
-        setBtnMyStadium(true)
+        setbtnMyStadiumActive(true)
 
         // KakaoMap
         showMyStadium(myStadium)
@@ -87,7 +85,7 @@ const StadiumMain = ({ title }) => {
 
     const onClickCurrentSearch = () => {
         showCurrentPosition(myStadium)
-        setBtnMyStadium(false)
+        setbtnMyStadiumActive(false)
     }
 
     const onClickMystadium = (e) => {
@@ -97,14 +95,15 @@ const StadiumMain = ({ title }) => {
             return false;
         }
 
-        if (btnMyStadium) {
+        if (btnMyStadiumActive) {
             showCurrentPosition(myStadium)
+            setbtnMyStadiumActive(false)
         }
         else {
             setStadiums(myStadium)
             showMyStadium(myStadium)
+            setbtnMyStadiumActive(true)
         }
-        setBtnMyStadium(!btnMyStadium)
     }
 
     const onClickSave = (stadiumInfo, userNo) => async (e) => {
@@ -254,7 +253,11 @@ const StadiumMain = ({ title }) => {
                                                                                 </p>
                                                                             </div>
                                                                             <div>
-                                                                                <a href={`https://map.kakao.com/link/to/${item.place_name},${item.y},${item.x}`} target="_blank" className='card-btn-link'>
+                                                                                <a
+                                                                                    href={`https://map.kakao.com/link/to/${item.place_name},${item.y},${item.x}`}
+                                                                                    target="_blank"
+                                                                                    className='card-btn-link'
+                                                                                >
                                                                                     길찾기
                                                                                 </a>
                                                                                 <button
@@ -287,7 +290,7 @@ const StadiumMain = ({ title }) => {
                             <div className='my-stadium__title'>
                                 구장찾기
                                 {userData ?
-                                    "(" + myStadium.length + ")"
+                                    "(" + stadiums.length + ")"
                                     : ''
                                 }
                             </div>
@@ -301,7 +304,7 @@ const StadiumMain = ({ title }) => {
                                 </button>
                                 <button
                                     type="button"
-                                    className={`btn btn-sm ${btnMyStadium ? 'btn-secondary' : 'btn-outline-secondary'}`}
+                                    className={`btn btn-sm ${btnMyStadiumActive ? 'btn-secondary' : 'btn-outline-secondary'}`}
                                     onClick={onClickMystadium}
                                 >즐겨찾기 보기</button>
                             </div>

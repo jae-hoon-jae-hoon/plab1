@@ -31,8 +31,8 @@ const BoardList = ({ title }) => {
 
     // useEffect
     useEffect(() => {
-        setKeyword(queryParams.get('keyword') ?? '')
-        setCurrentPage(queryParams.get('page') ?? 1)
+        setKeyword(queryParams.get('keyword') ? queryParams.get('keyword') : '')
+        setCurrentPage(queryParams.get('page') ? Number(queryParams.get('page')) : 1)
 
         // getList
         let data = {
@@ -133,8 +133,8 @@ const BoardListTable = React.memo(({ totalListCnt, listStartNum, list }) => {
                                                 {item.title}
                                             </Link>
                                         </td>
-                                        <td  className='td-writer'>{item.userName}</td>
-                                        <td  className='td-date'>{item.formatDate}</td>
+                                        <td className='td-writer'>{item.userName}</td>
+                                        <td className='td-date'>{item.formatDate}</td>
                                     </tr>
                                 )
                             })
