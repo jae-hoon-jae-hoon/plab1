@@ -1,6 +1,6 @@
 
 # 소개
-해당 프로젝트를 만들게 된 이유는
+해당 프로젝트를 만들게 된 이유는<br/>
 저는 평소 축구를 즐겨하고 친구들과 팀을 만들어 팀 운영도 하고있습니다.
 
 팀 운영중에<br/>
@@ -15,7 +15,7 @@
 구장 위치 확인과 바로 길찾기까지 가능하도록 하면 <br/>
 편할 것 같다고 생각되어 만들어보았습니다.
 
-블로그 : [<a href="https://github.com/jae-hoon-jae-hoon/plab1" target="_blank">https://github.com/jae-hoon-jae-hoon/plab1</a>](https://velog.io/@jeongjh159/%EC%B6%95%EA%B5%AC%ED%8C%80%EC%9A%B4%EC%98%81-%EC%9B%B9%EC%95%B1) <br/>
+블로그 : [https://velog.io/@jeongjh159/%EC%B6%95%EA%B5%AC%ED%8C%80%EC%9A%B4%EC%98%81-%EC%9B%B9%EC%95%B1](https://velog.io/@jeongjh159/%EC%B6%95%EA%B5%AC%ED%8C%80%EC%9A%B4%EC%98%81-%EC%9B%B9%EC%95%B1) <br/>
 실서버 : 추가예정
 
 ---
@@ -69,15 +69,15 @@
 ### 팀 관리
 <a href="https://velog.io/@jeongjh159/%EC%B6%95%EA%B5%AC%ED%8C%80%EC%9A%B4%EC%98%81-%ED%8C%80%EA%B4%80%EB%A6%AC" target="_blank">[팀관리 상세내용 보기]</a>
  - 팀 CRUD
+   	: AWS S3 이미지 업로드를 사용했습니다.
  - 팀 가입
- - My Team : 팀에 가입하고 팀을 관리할 수 있습니다.
+ - My Team
 
 ### 구장 찾기
 <a href="https://velog.io/@jeongjh159/%EC%B6%95%EA%B5%AC%ED%8C%80%EC%9A%B4%EC%98%81-%EA%B5%AC%EC%9E%A5%EC%B0%BE%EA%B8%B0" target="_blank">[구장찾기 상세내용 보기]</a>
  - 구장 리스트 
- 	: 카카오 지도 API를 이용해 근처 구장들의 위치와 구장 정보를 확인할 수 있습니다.
- - 구장 즐겨찾기 
- 	: 즐겨찾기로 등록된 구장들의 정보를 한 눈에 확인할 수 있습니다.
+ 	: 카카오 지도 API를 이용했습니다.
+ - 구장 즐겨찾기
   
 ---
 
