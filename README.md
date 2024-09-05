@@ -16,7 +16,7 @@
 편할 것 같다고 생각되어 만들어보았습니다.
 
 블로그 : [https://velog.io/@jeongjh159/%EC%B6%95%EA%B5%AC%ED%8C%80%EC%9A%B4%EC%98%81-%EC%9B%B9%EC%95%B1](https://velog.io/@jeongjh159/%EC%B6%95%EA%B5%AC%ED%8C%80%EC%9A%B4%EC%98%81-%EC%9B%B9%EC%95%B1) <br/>
-실서버 : 추가예정
+실서버 : [http://ebfootball3-env.eba-d5wkrmqx.ap-northeast-2.elasticbeanstalk.com](http://ebfootball3-env.eba-d5wkrmqx.ap-northeast-2.elasticbeanstalk.com)
 
 ---
 
