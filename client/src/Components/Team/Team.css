@@ -34,6 +34,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 16px;
+    margin-bottom: 30px;
 }
 
 .team-list__btn {
@@ -79,6 +81,11 @@
     .team-list__item {
         width: 50%;
         padding: 0px 10px 20px;
+    }
+}
+@media screen and (max-width:480px) {
+    .team-list__item {
+        width: 100%;
     }
 }
 

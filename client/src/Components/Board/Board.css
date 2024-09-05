@@ -33,6 +33,10 @@
 @media (max-width: 767px) {
 
     /* Board List */
+    .board__search-wrap {
+        margin-bottom: 30px;
+    }
+
     .board-list table thead {
         display: none;
     }

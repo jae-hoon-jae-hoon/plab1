@@ -17,6 +17,7 @@ const s3 = new S3Client({
     }
 })
 const upload = multer({
+    // storage : 저장할 공간에 대한 정보
     storage: multerS3({
         s3: s3,
         bucket: process.env.AWS_BUCKET_NAME,
@@ -24,7 +25,9 @@ const upload = multer({
             const encodedFileName = encodeURIComponent(file.originalname); // 파일명을 URL 인코딩
             cb(null, `${Date.now()}_${encodedFileName}`); // 인코딩된 파일명 사용
         }
-    })
+    }),
+    // limits : 파일 개수나 파일 사이즈를 제한 시 사용
+    // limits: { fileSize: 5 * 1024 * 1024 }
 })
 
 const teamJoinStatus = {

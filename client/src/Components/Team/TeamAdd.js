@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 // Imgs
 import no_img from './../../imgs/no_img.jpg'
@@ -35,6 +35,12 @@ const TeamAdd = ({ userData, showAddForm, setShowAddForm, setTeamList }) => {
 
     const onChangeFile = () => {
         const file = imgRef.current.files[0];
+
+        if (!file.type.includes('image')) {
+            alert('이미지 파일만 업로드 가능합니다.')
+            return false;
+        }
+
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = () => {
