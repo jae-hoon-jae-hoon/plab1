@@ -22,13 +22,13 @@ const MyTeam = ({ title }) => {
   const { id } = useParams();
   const teamNo = parseInt(id);
 
+  // Navigate
+  const navigate = useNavigate();
+
   // Redux
   const userData = useSelector((state) => {
     return state.member.userData
   });
-
-  // Navigate
-  const navigate = useNavigate();
 
   // State
   const [myteam, setMyTeam] = useState(null)
@@ -55,137 +55,94 @@ const MyTeam = ({ title }) => {
   const [showRecordUpdateForm, setShowRecordUpdateForm] = useState(false);
   const [modalRecordData, setModalRecordData] = useState({})
 
-
-  // useEffect - 기본정보
+  // UseEffect
   useEffect(() => {
-    if (!userData?.userNo) {
+    if (!(userData?.userNo)) {
       alert('로그인이 필요한 기능입니다.')
       navigate('/team');
+      return
     }
-    else {
-      let data = {
-        userNo: userData?.userNo,
-        teamNo
-      }
-      axios.post('/api/team/getMyTeamInfo', data)
-        .then(result => {
-          if (result.data.success) {
-            setMyTeam(result.data.data)
-            setOriginImgKey(result.data.data.teamImgKey)
-            setTeamName(result.data.data.teamName)
-            setTeamDesc(result.data.data.teamDesc)
-            setImgPreview(result.data.data.teamImgPath);
 
-          } else {
-            setMyTeam(null)
-            alert("MyTeam 불러오는 도중 에러가 발생했습니다.");
-          }
-        })
-        .catch(err => {
+    // useEffect - 기본정보
+    let myTeamInfoData = {
+      userNo: userData?.userNo,
+      teamNo
+    }
+    axios.post('/api/team/getMyTeamInfo', myTeamInfoData)
+      .then(result => {
+        if (result.data.success) {
+          setMyTeamInfo(result.data.data)
+        } else {
           setMyTeam(null)
           alert("MyTeam 불러오는 도중 에러가 발생했습니다.");
-        })
-    }
-  }, [userData?.userNo, teamNo, navigate])
+          return
+        }
+      })
+      .catch(err => {
+        setMyTeam(null)
+        alert("MyTeam 불러오는 도중 에러가 발생했습니다.");
+        return
+      })
 
-  // useEffect - 팀원정보
-  useEffect(() => {
-    if (!userData?.userNo) {
-      alert('로그인이 필요한 기능입니다.')
-      navigate('/team');
-    }
-    else {
-      // 팀원정보
-      let data = {
-        teamNo
-      }
-      axios.post('/api/team/getMyTeamMemberList', data)
-        .then(result => {
-          if (result.data.success) {
-            setMemberList(result.data.data)
-            return true
-          }
-          else {
-            setMemberList([])
-            alert('팀원정보를 불러오는 도중 에러가 발생했습니다.')
-            return false
-          }
-        })
-        .catch(err => {
-          setMemberList([])
-          alert('팀원정보를 불러오는 도중 에러가 발생했습니다.')
-          return false
-        })
+    // useEffect - 팀원정보
+    let data = { teamNo }
+    axios.post('/api/team/getMyTeamMemberList', data)
+      .then(result => {
+        if (!result.data.success) throw new Error("팀원정보를 불러오는 도중 에러가 발생했습니다.");
+        setMemberList(result.data.data)
+      })
+      .catch(err => {
+        setMemberList([])
+        alert('팀원정보를 불러오는 도중 에러가 발생했습니다.')
+        return
+      })
 
-      // 대기리스트
-      axios.post('/api/team/getWaitingList', data)
-        .then(result => {
-          if (result.data.success) {
-            setWaitingList(result.data.data)
-            return true
-          }
-          else {
-            setWaitingList([])
-            alert('가입대기 리스트를 불러오는데 실패했습니다.')
-            return false
-          }
-        })
-        .catch(err => {
-          setWaitingList([])
-          alert('가입대기 리스트를 불러오는데 실패했습니다.')
-          return false
-        })
+    // 대기리스트
+    axios.post('/api/team/getWaitingList', data)
+      .then(result => {
+        if (!result.data.success) throw new Error("가입대기 리스트를 불러오는데 실패했습니다.");
+        setWaitingList(result.data.data)
+      })
+      .catch(err => {
+        setWaitingList([])
+        alert('가입대기 리스트를 불러오는데 실패했습니다.')
+        return
+      })
 
-      // 거절리스트
-      axios.post('/api/team/getRejectList', data)
-        .then(result => {
-          if (result.data.success) {
-            setRejectList(result.data.data)
-            return true
-          }
-          else {
-            setRejectList([])
-            alert('가입거절 리스트를 불러오는데 실패했습니다.')
-            return false
-          }
-        })
-        .catch(err => {
-          setRejectList([])
-          alert('가입거절 리스트를 불러오는데 실패했습니다.')
-          return false
-        })
-    }
-  }, [userData?.userNo, teamNo, navigate])
+    // 거절리스트
+    axios.post('/api/team/getRejectList', data)
+      .then(result => {
+        if (!result.data.success) throw new Error("가입거절 리스트를 불러오는데 실패했습니다.");
+        setRejectList(result.data.data)
+      })
+      .catch(err => {
+        setRejectList([])
+        alert('가입거절 리스트를 불러오는데 실패했습니다.')
+        return
+      })
 
-  // useEffect - 경기기록
-  useEffect(() => {
-    if (!userData?.userNo) {
-      alert('로그인이 필요한 기능입니다.')
-      navigate('/team');
-    }
-    else {
-      // 팀원정보
-      let data = {
-        teamNo
-      }
-      axios.post('/api/team/getMyTeamRecord', data)
-        .then(result => {
-          if (result.data.success) {
-            setRecordList(result.data.data)
-          }
-          else {
-            throw new Error("경기기록을 불러오는 도중 에러가 발생했습니다.");
-          }
-        })
-        .catch(err => {
-          setRecordList([])
-          alert('경기기록을 불러오는 도중 에러가 발생했습니다.')
-          return false
-        })
-    }
+    // useEffect - 경기기록
+    axios.post('/api/team/getMyTeamRecord', data)
+      .then(result => {
+        if (!result.data.success) throw new Error("경기기록을 불러오는 도중 에러가 발생했습니다.");
+        setRecordList(result.data.data)
+      })
+      .catch(err => {
+        setRecordList([])
+        alert('경기기록을 불러오는 도중 에러가 발생했습니다.')
+        return
+      })
   }, [userData?.userNo, teamNo, navigate])
 
   // Method
+  const setMyTeamInfo = (data) => {
+    setMyTeam(data)
+    setOriginImgKey(data.teamImgKey)
+    setTeamName(data.teamName)
+    setTeamDesc(data.teamDesc)
+    setImgPreview(data.teamImgPath ? data.teamImgPath : no_img);
+  }
+
   const onChangeFile = () => {
     const file = imgRef.current.files[0];
     const reader = new FileReader();
@@ -196,19 +153,16 @@ const MyTeam = ({ title }) => {
       setChkChangeImg(true)
     };
   }
+
   const onClickFileDelete = (e) => {
     e.preventDefault();
-
     let chk = window.confirm('팀 이미지를 삭제하시겠습니까?')
     if (!chk) return false;
 
     imgRef.current.value = ''
     setImgFile(null)
     setImgPreview(no_img)
-
-    if (originImgKey) {
-      setChkChangeImg(true)
-    }
+    if (originImgKey) { setChkChangeImg(true) }
   }
 
   const onClickTeamInfoUpdate = (e) => {
@@ -232,14 +186,16 @@ const MyTeam = ({ title }) => {
     formData.append('name', teamName);
     formData.append('desc', teamDesc);
     formData.append('chkChangeImg', chkChangeImg)
-    formData.append('originImgKey', originImgKey)
+    formData.append('originImg', originImgKey)
 
     axios.post('/api/team/updateTeam', formData)
       .then(result => {
         if (result.data.success) {
           // img, name, desc 변경
-          let newTeamImgPath = result.data.teamImgPath ? result.data.teamImgPath : no_img
-          setImgPreview(newTeamImgPath)
+          if (chkChangeImg) {
+            let newTeamImgPath = result.data.teamImgPath ? result.data.teamImgPath : no_img
+            setImgPreview(newTeamImgPath)
+          }
           setTeamName(teamName)
           setTeamDesc(teamDesc)
 
@@ -684,7 +640,7 @@ const MyTeam = ({ title }) => {
               <h4>팀 삭제</h4>
               <p>팀을 삭제하시려면 아래 버튼을 눌러주세요.</p>
               <br />
-              <button className='btn btn- btn-danger' onClick={onClickDeleteTeam(teamNo, userData.userNo)}>팀 삭제</button>
+              <button className='btn btn- btn-danger' onClick={onClickDeleteTeam(teamNo, userData?.userNo)}>팀 삭제</button>
             </div>
 
           </div>
@@ -876,9 +832,9 @@ function UpdateRecordModal({ teamNo, myTeamName, modalRecordData, showRecordUpda
           <div className="modal-body">
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }} >
               <span>{myTeamName}</span>
-              <input type='number' value={myScore} min={0} max={9999} onChange={e => setMyScore(e.target.value)} />
+              <input type='number' value={myScore} min={0} max={9999} placeholder='0' onChange={e => setMyScore(e.target.value)} />
               :
-              <input type='number' value={opponentScore} min={0} max={9999} onChange={e => setOpponentScore(e.target.value)} />
+              <input type='number' value={opponentScore} min={0} max={9999} placeholder='0' onChange={e => setOpponentScore(e.target.value)} />
               <input type='text' placeholder='상대팀 이름' maxLength={50} value={opponentName} onChange={e => setOpponentName(e.target.value)} />
             </div>
           </div>

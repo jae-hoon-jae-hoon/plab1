@@ -28,46 +28,50 @@ const BoardUpdate = ({ title }) => {
 
     // Redux
     const userData = useSelector(state => state.member.userData)
-    
+
     // useEffect
     useEffect(() => {
-
         // Authorization
         if (!userData) {
             alert('로그인이 필요한 기능입니다.')
             navigate('/login?url=/board/update/' + id);
+            return
         }
+        else {
+            axios.post('/api/member/authorization', userData)
+                .then((result) => {
+                    if (!result.data.success) {
+                        // 권한 실패경우 - 로그인페이지 이동 + returnURL은 /board/write로 
+                        alert('로그인이 필요한 기능입니다.')
+                        navigate('/login?url=/board/update/' + id);
+                        return
+                    }
+                })
 
-        axios.post('/api/member/authorization', userData)
-            .then((result) => {
-                if (!result.data.success) {
-                    // 권한 실패경우 - 로그인페이지 이동 + returnURL은 /board/write로 
-                    alert('로그인이 필요한 기능입니다.')
-                    navigate('/login?url=/board/update/' + id);
-                }
-            })
-
-        // Get Board Data
-        axios.post('/api/board/detail', { boardNo: id })
-            .then(
-                result => {
-                    if (result.data.success) {
-                        let boardData = result.data.data;
-                        if (boardData.userNo != userData.userNo) {
-                            alert("사용자 정보가 일치하지 않습니다.")
+            // Get Board Data
+            axios.post('/api/board/detail', { boardNo: id })
+                .then(
+                    result => {
+                        if (result.data.success) {
+                            let boardData = result.data.data;
+                            if (boardData.userNo != userData.userNo) {
+                                alert("사용자 정보가 일치하지 않습니다.")
+                                navigate('/board')
+                                return
+                            }
+                            else {
+                                setTitle(boardData.title)
+                                setContent(boardData.content)
+                            }
+                        }
+                        else {
+                            alert("게시글을 불러오지 못했습니다.")
                             navigate('/board')
-                        }
-                        else{
-                            setTitle(boardData.title)
-                            setContent(boardData.content)
+                            return
                         }
                     }
-                    else {
-                        alert("게시글을 불러오지 못했습니다.")
-                        navigate('/board')
-                    }
-                }
-            )
+                )
+        }
     }, [id, userData])
 
     // Method

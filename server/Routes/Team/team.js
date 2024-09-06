@@ -238,8 +238,6 @@ router.post('/addTeam', upload.single('img'), async (req, res) => {
             })
         })
     } catch (error) {
-        // console.log(error);
-
         // 에러 발생 시, 업로드된 이미지 삭제
         if (req.file && req.file.key) {
             const params = {
@@ -251,9 +249,8 @@ router.post('/addTeam', upload.single('img'), async (req, res) => {
                 const data = await s3.send(command);
                 // console.log(data);
             } catch (err) {
-                console.error(err);
+                // console.error(err);
             }
-
         }
         result.message = error
         res.status(500).json(result)
@@ -440,7 +437,7 @@ router.post('/updateTeam', upload.single('img'), async (req, res) => {
         }
 
         // chkChangeImg가 true면 기존 이미지 삭제
-        if (boolChkChangeImg) {
+        if (boolChkChangeImg && originImgKey) {
             const params = {
                 Bucket: process.env.AWS_BUCKET_NAME,
                 Key: originImgKey,
@@ -448,13 +445,11 @@ router.post('/updateTeam', upload.single('img'), async (req, res) => {
 
             const command = new DeleteObjectCommand(params);
             try {
-                const data = await s3.send(command);
-                // console.log("성공");
                 // console.log(data);
+                const data = await s3.send(command);
             } catch (err) {
-                throw new Error('Image Delete Error')
-                // console.log("실패");
                 // console.error(err);
+                throw new Error('Image Delete Error')
             }
         }
 
@@ -502,8 +497,6 @@ router.post('/updateTeam', upload.single('img'), async (req, res) => {
                 res.status(500).json(result)
             }
         }
-
-        // console.log(error);
         result.message = error
         res.status(500).json(result)
     }
@@ -924,12 +917,6 @@ router.post('/deleteMyTeam', (req, res) => {
         }
 
         if (results.length === 1) {
-
-            // 2. 권한검사 통과하면 삭제 진행
-            // 2-1. team_record 삭제
-            // 2-2. team_join 삭제
-            // 2-3. team 삭제
-            // 2-4. team테이블의 이미지 삭제
 
             try {
 

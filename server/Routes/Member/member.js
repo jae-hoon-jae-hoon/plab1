@@ -256,7 +256,7 @@ router.post('/authorization', (req, res) => {
 
                 );
 
-                console.log("accessToken 재발급");
+                // console.log("accessToken 재발급");
 
                 return res.json({ success: true });
             }
@@ -449,24 +449,34 @@ router.post('/deleteAccount', (req, res) => {
             return res.status(400).json(result);
         }
 
-        // 회원삭제
-        let sql = "DELETE FROM member WHERE userNo = ?"
-        let param = [userNo]
-        db.query(sql, param, (err, results) => {
-            if (err) {
-                result.message = "Delete Error"
-                return res.status(500).json(result)
-            }
+        try {
+            // 트랜잭션 시작
+            db.beginTransaction();
 
-            if (results.affectedRows === 1) {
-                result.success = true
-                result.message = "Delete Success"
-                return res.status(200).json(result)
-            } else {
-                result.message = "Delete Error"
-                return res.status(500).json(result)
-            }
-        })
+            let param = [userNo]
+
+            // mystadium 삭제
+            const result1 = db.execute('DELETE FROM my_stadium WHERE userNo = ?', param)
+
+            // 회원삭제
+            const result2 = db.query('DELETE FROM member WHERE userNo = ?', param)
+            // ⚽ 'result2의 결과가 true일 경우 true'  추가
+            // if (results.affectedRows === 1) {} 
+
+            // 커밋
+            db.commit();
+            result.success = true
+            result.message = "Delete Success"
+            return res.status(200).json(result)
+
+        } catch (error) {
+            // console.log(error);
+            
+            // 롤백
+            db.rollback();
+            result.message = "Delete Error"
+            return res.status(500).json(result)
+        }
     })
 
 })

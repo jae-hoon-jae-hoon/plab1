@@ -42,7 +42,7 @@ async function getList(startIndex, perPage, keyword) {
                 sql += ` WHERE title LIKE "%${keyword}%" OR content LIKE "%${keyword}%" `;
             }
             sql += `
-                    ORDER BY regDate DESC
+                    ORDER BY regDate DESC, boardNo DESC
                     LIMIT ${startIndex}, ${perPage}
                     `
             db.query(sql, (err, results) => {
