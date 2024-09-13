@@ -25,13 +25,7 @@ import MyTeam from './Components/Team/MyTeam';
 import StadiumMain from './Components/Stadium/StadiumMain';
 import BoardUpdate from './Components/Board/BoardUpdate';
 
-
 function App() {
-
-  // useEffect(() => {
-  //   axios.get("/api/test")
-  // }, [])
-
   return (
     <BrowserRouter>
       <Header />

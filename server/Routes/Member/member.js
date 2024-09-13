@@ -8,6 +8,8 @@ const { formatDate } = require('../../common');
 // Library
 const bcrypt = require('bcrypt');
 const { generateAccessToken, generateRefreshToken, verifyAccessToken, verifyRefreshToken } = require('../../jwt');
+const { verifyRecaptcha } = require('../../recaptcha');
+
 
 
 /* 아이디 중복검사 */
@@ -94,8 +96,9 @@ router.post('/signup', async (req, res) => {
 
 
 /* 로그인 */
-router.post('/login', (req, res) => {
-    const { userId, userPw } = req.body
+router.post('/login', async (req, res) => {
+    const { userId, userPw, reCaptchToken } = req.body
+
 
     let result = { success: false, message: '' }
 
@@ -103,6 +106,14 @@ router.post('/login', (req, res) => {
     if (userId === '' || userPw === '') {
         result.message = "Input Value Error"
         return res.status(400).json(result)
+    }
+
+    // reCAPTCHA
+    try {
+        await verifyRecaptcha(reCaptchToken);
+    } catch (err) {
+        result.message = "reCaptcha Error"
+        return res.status(500).json(result)
     }
 
     // Login
@@ -471,7 +482,7 @@ router.post('/deleteAccount', (req, res) => {
 
         } catch (error) {
             // console.log(error);
-            
+
             // 롤백
             db.rollback();
             result.message = "Delete Error"
